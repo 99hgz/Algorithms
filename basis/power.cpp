@@ -1,5 +1,6 @@
 /*
  * @key word: 快速幕,阶乘,power
+ * @已测试:FZU-1752
  * @Author: hgz
  * @Date: 2017-04-22 11:17:30
  * @Last Modified by: hgz
