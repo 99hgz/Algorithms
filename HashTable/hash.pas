@@ -1,11 +1,13 @@
 {
- * @key word:哈希，散列
+ * @key word:哈希，除法散列，乘法散列
  * @已测试:http://www.yyhs.net.cn:801/JudgeOnline/problem.php?id=1600
+ * @未测试:乘法散列(via. LHQ)
  * @Author: hgz 
  * @Date: 2017-04-23 12:27:40 
  * @Last Modified by:   hgz 
  * @Last Modified time: 2017-04-23 12:27:40 
 }
+const max=1000000000*10000;ww=4194304;
 var
     c:array[0..225287]of int64;
     q:array[1..1000000]of record sl,key:int64;end;
@@ -18,6 +20,14 @@ begin
     k:=abs(k);
     exit(k mod 225287);
 end;
+
+function h2(k:int64):int64;
+  var tmp:int64;
+  begin
+    k:=k+max; k:=k and ww;
+    tmp:=6180339*k;
+    exit((tmp and ww) shr 2);
+  end;
  
 procedure add(t:int64);
 var
