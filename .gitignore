@@ -16,6 +16,7 @@ $RECYCLE.BIN/
 *.exe
 
 # Windows shortcuts
+.vscode
 *.lnk
 
 # =========================

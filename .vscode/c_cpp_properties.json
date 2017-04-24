@@ -25,7 +25,7 @@
         {
             "name": "Win32",
             "includePath": [
-                "E:\\MinGW\\include\\c++\\3.4.5\\*"
+                "C:\\Program Files (x86)\\CodeBlocks\\MinGW\\lib\\gcc\\mingw32\\4.9.2\\include\\c++\\"
             ],
             "browse": {
                 "limitSymbolsToIncludedHeaders": true,

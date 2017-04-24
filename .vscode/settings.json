@@ -11,6 +11,8 @@
         "limits": "cpp",
         "ostream": "cpp",
         "streambuf": "cpp",
-        "cmath": "cpp"
+        "cmath": "cpp",
+        "algorithm": "cpp",
+        "cstring": "cpp"
     }
 }
