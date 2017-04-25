@@ -2,6 +2,7 @@
  * @key word:哈希，除法散列，乘法散列
  * @已测试:http://www.yyhs.net.cn:801/JudgeOnline/problem.php?id=1600
  * @未测试:乘法散列(via. LHQ)
+ * @h2超时，辣鸡‼
  * @Author: hgz 
  * @Date: 2017-04-23 12:27:40 
  * @Last Modified by:   hgz 
@@ -9,7 +10,7 @@
 }
 const max=1000000000*10000;ww=4194304;
 var
-    c:array[0..225287]of int64;
+    c:array[0..300000]of int64;
     q:array[1..1000000]of record sl,key:int64;end;
     next:array[1..1000000]of int64;
     a:array[1..1000]of int64;
@@ -21,14 +22,26 @@ begin
     exit(k mod 225287);
 end;
 
+{function h2(k:int64):int64;
+var 
+    tmp:int64;
+begin
+        k:=k+max; k:=k and ww;
+        tmp:=6180339*k;
+        exit((tmp and ww) shr 2);
+end;}
+
 function h2(k:int64):int64;
-  var tmp:int64;
-  begin
-    k:=k+max; k:=k and ww;
-    tmp:=6180339*k;
-    exit((tmp and ww) shr 2);
-  end;
- 
+var 
+    tmp:double;
+	res:int64;
+begin
+    tmp:=k*0.618034;
+	res:=abs(trunc((1<<18)*(tmp-trunc(tmp))));
+	//writeln(k,' ',res);
+    exit(res);
+end;
+
 procedure add(t:int64);
 var
     find:boolean;
@@ -71,7 +84,7 @@ begin
         for j:=1 to n do
             begin
             tmp1:=a1*a[i]+b1*a[j];
-            tmp:=h(tmp1);
+            tmp:=h2(tmp1);
             if c[tmp]=0 then begin
                 cs:=cs+1;
                 q[cs].key:=tmp1;
@@ -84,7 +97,7 @@ begin
         for j:=1 to n do
         begin
         tmp:=p-c1*a[i]-d1*a[j];
-        ans:=ans+search2(h(tmp));
+        ans:=ans+search2(h2(tmp));
         end;
     writeln(ans);
 end.  

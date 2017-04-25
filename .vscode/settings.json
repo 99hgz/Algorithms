@@ -13,6 +13,7 @@
         "streambuf": "cpp",
         "cmath": "cpp",
         "algorithm": "cpp",
-        "cstring": "cpp"
+        "cstring": "cpp",
+        "cstdlib": "cpp"
     }
 }
