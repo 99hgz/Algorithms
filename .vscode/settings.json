@@ -14,6 +14,8 @@
         "cmath": "cpp",
         "algorithm": "cpp",
         "cstring": "cpp",
-        "cstdlib": "cpp"
+        "cstdlib": "cpp",
+        "string": "cpp",
+        "*.tcc": "cpp"
     }
 }
