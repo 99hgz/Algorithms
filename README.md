@@ -19,3 +19,8 @@
 - √ Splay
 - √ 并查集
 - √ 逆元/扩欧
+- × Floyd-Warshall
+- × Tarjan
+- × 2-SAT
+- √ 线性基
+- √ 树-重心
