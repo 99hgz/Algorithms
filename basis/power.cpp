@@ -50,9 +50,9 @@ ll power2(ll a, ll b, ll p) {
 // test
 int main() {
   ll a, b, c;
-  while (~scanf("%I64d%I64d%I64d", &a, &b, &c)) {
-    printf("%I64d\n", power2(a, b, c));
+  while (~scanf("%lld%lld%lld", &a, &b, &c)) {
+    printf("%lld\n", power2(a, b, c));
   }
-  // system("pause");
+  //system("pause");
   return 0;
 }
