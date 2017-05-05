@@ -27,6 +27,7 @@
             },
             "windows": {
                 "MIMode": "gdb",
+                "miDebuggerPath": "C:\\Program Files (x86)\\CodeBlocks\\MinGW\\bin\\gdb.exe",
                 "setupCommands": [
                     {
                         "description": "Enable pretty-printing for gdb",

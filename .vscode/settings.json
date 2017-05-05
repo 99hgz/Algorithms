@@ -16,6 +16,8 @@
         "cstring": "cpp",
         "cstdlib": "cpp",
         "string": "cpp",
-        "*.tcc": "cpp"
+        "*.tcc": "cpp",
+        "vector": "cpp",
+        "initializer_list": "cpp"
     }
 }
