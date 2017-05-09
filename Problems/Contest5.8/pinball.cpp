@@ -1,11 +1,3 @@
-/*
- * @key word:线段树
- * @已测试:HDU - 1754
- * @Author: hgz 
- * @Date: 2017-04-24 19:09:25 
- * @Last Modified by:   hgz 
- * @Last Modified time: 2017-04-24 19:09:25 
- */
 #include <cstdio>
 #include <algorithm>
 
@@ -17,23 +9,23 @@ struct line
 {
     int l;
     int r;
-    int cmin;
+    int cmax;
 } Tree[MAXN * 4];
 
 void pushUp(int t)
 {
     int x = t << 1;
-    Tree[t].cmin = min(Tree[x + 1].cmin, Tree[x + 2].cmin);
+    Tree[t].cmax = max(Tree[x + 1].cmax, Tree[x + 2].cmax);
 }
 
 void buildTree(int l, int r, int t)
 {
     Tree[t].l = l;
     Tree[t].r = r;
-    Tree[t].cmin = INT_MAX;
+    Tree[t].cmax = 0;
     if (l == r)
     {
-        scanf("%d", &Tree[t].cmin);
+        scanf("%d", &Tree[t].cmax);
         return;
     }
     int x = (l + r) >> 1;
@@ -46,7 +38,7 @@ void updateTree(int v, int cn, int t)
 {
     if (Tree[t].l == v && Tree[t].r == v)
     {
-        Tree[t].cmin = cn;
+        Tree[t].cmax = cn;
         return;
     }
     int m = (Tree[t].l + Tree[t].r) >> 1;
@@ -65,7 +57,7 @@ int queryTree(int l, int r, int t)
 {
     if (Tree[t].l == l && Tree[t].r == r)
     {
-        return Tree[t].cmin;
+        return Tree[t].cmax;
     }
     int m = (Tree[t].l + Tree[t].r) >> 1;
     if (l > m)
@@ -80,30 +72,23 @@ int queryTree(int l, int r, int t)
     {
         int ret1 = queryTree(l, m, t << 1 | 1);
         int ret2 = queryTree(m + 1, r, (t << 1) + 2);
-        return min(ret1, ret2);
+        return max(ret1, ret2);
     }
 }
 
+int n, m;
+
 int main()
 {
-    int n, m;
-    while (scanf("%d%d", &n, &m) != EOF)
-    {
-        buildTree(1, n, 0);
-        while (m--)
-        {
-            char op[2];
-            int a, b;
-            scanf("%s%d%d", op, &a, &b);
-            if (op[0] == 'Q')
-            {
-                printf("%d\n", queryTree(a, b, 0));
-            }
-            else
-            {
-                updateTree(a, b, 0);
-            }
-        }
+    scanf("%d%d", &n, &m);
+    for (int i = 0; i < n; i++) {
+        scanf("%d%d%d%d\n", &l[i],&r[i],&m[i],&cost[i]);
+        points.push_back(l[i]);     
+        points.push_back(r[i]);  
+        //points.push_back(m[i]);       
     }
-    return 0;
+    sort(points.begin(),points.end());
+    for (int i = 0; i < points.size(); i++) {
+        points[i]
+    }
 }

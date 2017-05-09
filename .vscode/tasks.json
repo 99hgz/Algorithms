@@ -2,8 +2,27 @@
     // See https://go.microsoft.com/fwlink/?LinkId=733558
     // for the documentation about the tasks.json format
     "version": "0.1.0",
-    "command": "g++",
-    "isShellCommand": true,
-    "args": ["-g","${file}","-o","${file}.exe"],
-    "showOutput": "always"
+    "tasks": [
+        {
+            "taskName": "g++",
+            "command": "g++",
+            "isShellCommand": true,
+            "args": [
+                "-g",
+                "${file}",
+                "-o",
+                "${file}.exe"
+            ],
+            "showOutput": "always"
+        },
+        {
+            "taskName": "fpc",
+            "command": "fpc",
+            "isShellCommand": true,
+            "args": [
+                "${relativeFile}",
+            ],
+            "showOutput": "always"
+        }
+    ]
 }
