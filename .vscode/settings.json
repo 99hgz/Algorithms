@@ -35,6 +35,8 @@
         "future": "cpp",
         "mutex": "cpp",
         "thread": "cpp",
-        "valarray": "cpp"
+        "valarray": "cpp",
+        "chrono": "cpp",
+        "ratio": "cpp"
     }
 }
