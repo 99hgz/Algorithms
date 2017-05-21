@@ -33,13 +33,15 @@
         {
             "name": "Win32",
             "includePath": [
-                "C:\\Program Files (x86)\\CodeBlocks\\MinGW\\lib\\gcc\\mingw32\\4.9.2\\include\\c++\\"
+                "C:\\Program Files (x86)\\CodeBlocks\\MinGW\\lib\\gcc\\mingw32\\4.9.2\\include\\c++\\",
+                "E:\\MinGW\\lib\\gcc\\mingw32\\5.3.0\\include\\c++"
             ],
             "browse": {
                 "limitSymbolsToIncludedHeaders": true,
                 "databaseFilename": "",
                 "path": [
-                    "C:\\Program Files (x86)\\CodeBlocks\\MinGW\\lib\\gcc\\mingw32\\4.9.2\\include\\c++\\"
+                    "C:\\Program Files (x86)\\CodeBlocks\\MinGW\\lib\\gcc\\mingw32\\4.9.2\\include\\c++\\",
+                    "E:\\MinGW\\lib\\gcc\\mingw32\\5.3.0\\include\\c++"
                 ]
             }
         }

@@ -17,7 +17,7 @@ int main()
         scanf("%d%d", &p, &t);
         to[p].push_back(p + t - 1);
     }
-    memset(f, 0xff, sizeof(f));
+    memset(f, 127, sizeof(f));
     f[0] = 0;
     for (i = 1; i <= m; i++)
     {

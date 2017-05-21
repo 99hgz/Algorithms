@@ -1,36 +1,40 @@
-/*
- * @key word：LCS,最长公共子串
- * @已测试
- * @Author: hgz 
- * @Date: 2017-05-07 15:29:36 
- * @Last Modified by: hgz
- * @Last Modified time: 2017-05-07 15:30:04
- */
 #include <cstdio>
 #include <cstring>
 #include <cstdlib>
-#define MAX(a, b) (a > b ? a : b)
-const int MAXN = 110;
-int dp[MAXN][MAXN];
-char a[MAXN], b[MAXN];
+#include <algorithm>
+using namespace std;
+typedef long long ll;
+
+bool isbest[50010];
+int a[5010], b[5010], f[5010];
+int n, i, j, k, MAX, num;
 int main()
 {
-    scanf("%s%s", a + 1, b + 1);
-    memset(dp, 0, sizeof(dp));
-    int i, j;
-    for (i = 1; a[i]; i++)
+    scanf("%d", &n);
+    for (i = 1; i <= n; i++)
+        scanf("%d", &a[i]);
+    b[1] = 1;
+    f[1] = 1;
+    for (i = 2; i <= n + 1; i++)
     {
-        for (j = 1; b[j]; j++)
-        {
-            if (a[i] == b[j]){
-                dp[i][j] = dp[i - 1][j - 1] + 1;
-                key[i][j] = ;
-            }
-            else{
-                dp[i][j] = MAX(dp[i][j - 1], dp[i - 1][j]);
-            }
-        }
+        MAX = 0;
+        f[i] = 1;
+        for (j = i - 1; j >= 1; j--)
+            if (a[i] < a[j])
+                if (b[j] > MAX)
+                {
+                    MAX = b[j];
+                    memset(isbest, 1, sizeof(isbest));
+                    isbest[a[j]] = 0;
+                    f[i] = f[j];
+                }
+                else if (b[j] == MAX && isbest[a[j]])
+                {
+                    isbest[a[j]] = 0;
+                    f[i] += f[j];
+                }
+        b[i] = MAX + 1;
     }
-    printf("%d\n", dp[i - 1][j - 1]);
-    return 0;
-}   
+    printf("%d %d", b[n + 1] - 1, f[n + 1]);
+    //system("pause");
+}

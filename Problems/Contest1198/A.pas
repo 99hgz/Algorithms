@@ -15,9 +15,9 @@ function binary_search(x:int64):int64;
     end;
   
 begin
-readln(n);
+read(n);
 for i:=1 to n do
-    read(a[i]);
+    readln(a[i]);
 for i:=n downto 1 do
     begin
     if a[i]>=f[last] then
