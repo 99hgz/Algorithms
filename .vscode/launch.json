@@ -2,6 +2,22 @@
     "version": "0.2.0",
     "configurations": [
         {
+            "name": "Python",
+            "type": "python",
+            "request": "launch",
+            "stopOnEntry": false,
+            "pythonPath": "C:\\Users\\hgz\\AppData\\Local\\Programs\\Python\\Python36",
+            "program": "${file}",
+            "cwd": "${workspaceRoot}",
+            "env": {},
+            "envFile": "${workspaceRoot}/.env",
+            "debugOptions": [
+                "WaitOnAbnormalExit",
+                "WaitOnNormalExit",
+                "RedirectOutput"
+            ]
+        },
+        {
             "name": "C++ Launch",
             "type": "cppdbg",
             "request": "launch",
@@ -12,6 +28,9 @@
             "environment": [],
             "externalConsole": true,
             "preLaunchTask": "g++",
+            "debugOptions": [
+                "RedirectOutput"
+            ],
             "linux": {
                 "MIMode": "gdb",
                 "setupCommands": [
