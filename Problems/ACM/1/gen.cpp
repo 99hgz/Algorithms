@@ -2,7 +2,9 @@
 #include <cstring>
 #include <cstdlib>
 #include <algorithm>
+#include <iostream>
 #include <ctime>
+#include <set>
 using namespace std;
 typedef long long ll;
 
@@ -24,16 +26,27 @@ class Random
     }
 };
 int a[100010];
-int main()
+set<int> s;
+
+int main(int argc, char **argv)
 {
-    freopen("lln.in", "w", stdout);
     Random r;
-    r.InitSeed();
-    int sl = 100000;
+    //printf("%d\n", argv[1]);
+    srand(atoi(argv[1]));
+    int sl = atoi(argv[2]);
+    //printf("%d\n", atoi(argv[2]));
+    //int sl = 50000;
+    //srand(1517897);
+    freopen("lln.in", "w", stdout);
     printf("%d\n", sl);
+    int tmp;
     for (int i = 1; i <= sl; i++)
     {
-        a[i] = r.Range(0, 1000000);
+        tmp = r.Range(0, 1000000);
+        while (s.count(tmp))
+            tmp = r.Range(0, 1000000);
+        a[i] = tmp;
+        s.insert(tmp);
         printf("%d ", a[i]);
     }
     printf("\n");

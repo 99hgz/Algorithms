@@ -90,7 +90,7 @@ int main()
     blo = 1000;
     for (int i = 1; i <= n; i++)
         v[i] = read();
-    for (int i = 1; i <= n; i++)
+    for (int i = 1; i <= n; i++)  
     {
         bl[i] = (i - 1) / blo + 1;
         st[bl[i]].insert(v[i]);

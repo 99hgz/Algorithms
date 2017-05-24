@@ -4,7 +4,7 @@
 #include <cmath>
 #include <set>
 using namespace std;
-int blo, bl[100005], v[100005], n, lazy[1005];
+int blo, bl[100005], v[100005], n, lazy[2000];
 long long read()
 {
     long long x = 0, f = 1;
@@ -22,7 +22,7 @@ long long read()
     }
     return x * f;
 }
-set<int> st[1005];
+set<int> st[2000];
 void clear(int x)
 {
     st[x].clear();
@@ -33,13 +33,19 @@ void clear(int x)
 void change(int l, int r, int val)
 {
     for (int i = l; i <= min(bl[l] * blo, r); i++)
+    {
+        st[bl[l]].erase(v[i]);
         v[i] += val;
-    clear(bl[l]);
+        st[bl[r]].insert(v[i]);
+    }
     if (bl[l] != bl[r])
     {
         for (int i = r; i >= (bl[r] - 1) * blo + 1; i--)
+        {
+            st[bl[r]].erase(v[i]);
             v[i] += val;
-        clear(bl[r]);
+            st[bl[r]].insert(v[i]);
+        }
     }
     for (int i = bl[l] + 1; i <= bl[r] - 1; i++)
         lazy[i] += val;
@@ -54,7 +60,7 @@ void query(int l, int r, int x)
     {
         for (int i = r; i >= (bl[r] - 1) * blo + 1; i--)
             if (v[i] + lazy[bl[r]] < x)
-                ans - max(ans, v[i]) + lazy[bl[r]];
+                ans = max(ans, v[i]) + lazy[bl[r]];
     }
     for (int i = bl[l] + 1; i <= bl[r] - 1; i++)
     {
@@ -84,7 +90,7 @@ int main()
     for (int i = 1; i <= n; i++)
     {
         scanf("%d", &char_);
-        if (char_ == 0)
+        if (char_ == 1)
         {
             int l, r, val;
             scanf("%d %d %d", &l, &r, &val);
@@ -97,8 +103,5 @@ int main()
             query(l, r, x);
         }
     }
-    fclose(stdin);
-    fclose(stdout);
-    //system("pause");
     return 0;
 }
