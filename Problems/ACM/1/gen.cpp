@@ -69,15 +69,15 @@ int main(int argc, char **argv)
         kind = r.Range(0, 5);
         if (kind < 2)
         {
-            left = r.Range(0, sl);
-            right = r.Range(left, sl + 1);
+            left = r.Range(0, sl - 100);
+            right = r.Range(left, sl - 1);
             mid = r.Range(left, right + 1);
             printf("1 %d %d %d\n", left, right, a[mid]);
         }
         else
         {
-            left = r.Range(0, sl);
-            right = r.Range(left, sl + 1);
+            left = r.Range(0, sl - 100);
+            right = r.Range(left, sl - 1);
             printf("0 %d %d %d\n", left, right, r.Range(1, 100000));
         }
     }
