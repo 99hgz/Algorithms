@@ -1,0 +1,8 @@
+数据 problem0~problem9
+数据生成器 gen.exe <seed> <n>
+	usage gen.exe 5488789 10000
+批量生成 createDATA.py
+	usage python3 createDATA.py
+
+标程 lln.cpp
+错误程序示例 wrong.cpp

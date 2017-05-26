@@ -29,12 +29,7 @@ class Random
 };
 int randll()
 {
-    int tmp = 0;
-    for (int i = 0; i < 30; i++)
-    {
-        tmp += rand();
-    }
-    return tmp;
+    return (rand() % 1000) + 2333333;
 }
 
 int main(int argc, char **argv)

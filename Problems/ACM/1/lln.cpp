@@ -1,13 +1,24 @@
-#include <iostream>
-#include <cstdio>
-#include <algorithm>
-#include <cmath>
+
+
+#include <map>
 #include <set>
+#include <cmath>
+#include <stack>
+#include <queue>
+#include <cstdio>
+#include <vector>
+#include <cstring>
+#include <cstdlib>
+#include <iostream>
+#include <algorithm>
+#define mod 998244353
+#define pi acos(-1)
+#define inf 0x7fffffff
+#define ll long long
 using namespace std;
-int blo, bl[100005], v[100005], n, lazy[2000];
-long long read()
+ll read()
 {
-    long long x = 0, f = 1;
+    ll x = 0, f = 1;
     char ch = getchar();
     while (ch < '0' || ch > '9')
     {
@@ -22,59 +33,51 @@ long long read()
     }
     return x * f;
 }
-set<int> st[2000];
-void clear(int x)
+ll n, blo;
+ll v[50005], bl[50005], atag[50005];
+vector<ll> ve[505];
+void reset(ll x)
 {
-    st[x].clear();
-    for (int i = (x - 1) * blo + 1; i <= min(n, x * blo); i++)
-        st[x].insert(v[i]);
-    //sort(st[x].begin(),st[x].end());
+    ve[x].clear();
+    for (ll i = (x - 1) * blo + 1; i <= min(x * blo, n); i++)
+        ve[x].push_back(v[i]);
+    sort(ve[x].begin(), ve[x].end());
 }
-void change(int l, int r, int val)
+void add(ll a, ll b, ll c)
 {
-    for (int i = l; i <= min(bl[l] * blo, r); i++)
+    for (ll i = a; i <= min(bl[a] * blo, b); i++)
+        v[i] += c;
+    reset(bl[a]);
+    if (bl[a] != bl[b])
     {
-        st[bl[l]].erase(v[i]);
-        v[i] += val;
-        st[bl[r]].insert(v[i]);
+        for (ll i = (bl[b] - 1) * blo + 1; i <= b; i++)
+            v[i] += c;
+        reset(bl[b]);
     }
-    if (bl[l] != bl[r])
+    for (ll i = bl[a] + 1; i <= bl[b] - 1; i++)
+        atag[i] += c;
+}
+ll query(ll a, ll b, ll c)
+{
+    ll ans = -1;
+    for (ll i = a; i <= min(bl[a] * blo, b); i++)
+        if (v[i] + atag[bl[a]] < c)
+            ans = max(ans, atag[bl[a]] + v[i]);
+    if (bl[a] != bl[b])
+        for (ll i = (bl[b] - 1) * blo + 1; i <= b; i++)
+            if (v[i] + atag[bl[b]] < c)
+                ans = max(ans, v[i] + atag[bl[b]]);
+    for (ll i = bl[a] + 1; i <= bl[b] - 1; i++)
     {
-        for (int i = r; i >= (bl[r] - 1) * blo + 1; i--)
+        ll x = c - atag[i];
+        vector<ll>::iterator it1 = lower_bound(ve[i].begin(), ve[i].end(), x);
+        if (it1 != ve[i].begin())
         {
-            st[bl[r]].erase(v[i]);
-            v[i] += val;
-            st[bl[r]].insert(v[i]);
+            it1--;
+            ans = max(ans, *it1 + atag[i]);
         }
     }
-    for (int i = bl[l] + 1; i <= bl[r] - 1; i++)
-        lazy[i] += val;
-}
-void query(int l, int r, int x)
-{
-    int ans = -1;
-    for (int i = l; i <= min(bl[l] * blo, r); i++)
-        if (v[i] + lazy[bl[l]] < x)
-            ans = max(ans, v[i] + lazy[bl[l]]);
-    if (bl[l] != bl[r])
-    {
-        for (int i = r; i >= (bl[r] - 1) * blo + 1; i--)
-            if (v[i] + lazy[bl[r]] < x)
-                ans = max(ans, v[i]) + lazy[bl[r]];
-    }
-    for (int i = bl[l] + 1; i <= bl[r] - 1; i++)
-    {
-        int c = x - lazy[i];
-        set<int>::iterator it1 = st[i].lower_bound(c);
-        if (st[i].begin() == it1)
-            continue;
-        it1--;
-        ans = max(ans, *it1 + lazy[i]);
-    }
-    if (ans == -1)
-        printf("impossible\n");
-    else
-        printf("%d\n", ans);
+    return ans;
 }
 int main()
 {
@@ -82,26 +85,24 @@ int main()
     freopen("lln.out", "w", stdout);
     n = read();
     blo = sqrt(n);
-    for (int i = 1; i <= n; i++)
-        v[i] = read(), bl[i] = (i - 1) / blo + 1, st[bl[i]].insert(v[i]);
-    //for(int i=1;i<=bl[n];i++)
-    //sort(st[i].begin(),st[i].end());
-    int char_;
-    for (int i = 1; i <= n; i++)
+    for (ll i = 1; i <= n; i++)
+        v[i] = read();
+    for (ll i = 1; i <= n; i++)
     {
-        scanf("%d", &char_);
-        if (char_ == 1)
-        {
-            int l, r, val;
-            scanf("%d %d %d", &l, &r, &val);
-            change(l, r, val);
-        }
-        else
-        {
-            int l, r, x;
-            scanf("%d %d %d", &l, &r, &x);
-            query(l, r, x);
-        }
+        bl[i] = (i - 1) / blo + 1;
+        ve[bl[i]].push_back(v[i]);
     }
+    for (ll i = 1; i <= bl[n]; i++)
+        sort(ve[i].begin(), ve[i].end());
+    for (ll i = 1; i <= n; i++)
+    {
+        ll f = read(), a = read(), b = read(), c = read();
+        if (f == 0)
+            add(a, b, c);
+        if (f == 1)
+            printf("%lld\n", query(a, b, c));
+    }
+    fclose(stdin);
+    fclose(stdout);
     return 0;
 }

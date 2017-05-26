@@ -32,26 +32,24 @@ ll read()
     return x * f;
 }
 ll n, blo;
-ll v[15000], bl[15000], atag[15000];
+ll v[100005], bl[100005], atag[100005];
 set<ll> st[500];
 void add(ll a, ll b, ll c)
 {
     for (ll i = a; i <= min(bl[a] * blo, b); i++)
     {
+        st[bl[a]].erase(v[i]);
         v[i] += c;
-    }
-    st[bl[a]].clear();
-    for (ll i = (bl[a] - 1) * blo + 1; i <= min(bl[a] * blo, n); i++)
         st[bl[a]].insert(v[i]);
+    }
     if (bl[a] != bl[b])
     {
         for (ll i = (bl[b] - 1) * blo + 1; i <= b; i++)
         {
+            st[bl[b]].erase(v[i]);
             v[i] += c;
-        }
-        st[bl[b]].clear();
-        for (ll i = (bl[b] - 1) * blo + 1; i <= min(bl[b] * blo, n); i++)
             st[bl[b]].insert(v[i]);
+        }
     }
     for (ll i = bl[a] + 1; i <= bl[b] - 1; i++)
         atag[i] += c;
@@ -87,8 +85,9 @@ int main()
 {
     freopen("lln.in", "r", stdin);
     freopen("lln.out", "w", stdout);
+    ll tmp;
     n = read();
-    blo = (ll)sqrt(n);
+    blo = sqrt(n);
     for (ll i = 1; i <= n; i++)
         v[i] = read();
     for (ll i = 1; i <= n; i++)
@@ -102,7 +101,13 @@ int main()
         if (f == 0)
             add(a, b, c);
         if (f == 1)
-            printf("%lld\n", query(a, b, c));
+        {
+            tmp = query(a, b, c);
+            if (tmp == -1)
+                printf("-1\n");
+            else
+                printf("%lld\n", tmp);
+        }
     }
     fclose(stdin);
     fclose(stdout);
