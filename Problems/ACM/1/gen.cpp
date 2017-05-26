@@ -7,8 +7,8 @@
 #include <set>
 using namespace std;
 typedef long long ll;
-int a[100010];
-set<int> s;
+ll a[100010];
+set<ll> s;
 
 class Random
 {
@@ -29,7 +29,7 @@ class Random
 };
 int randll()
 {
-    return (rand() % 1000) + 2333333;
+    return (rand() % 100);
 }
 
 int main(int argc, char **argv)
@@ -58,22 +58,28 @@ int main(int argc, char **argv)
         printf("%d ", a[i]);
     }
     printf("\n");
-    int left, right, mid, kind;
+    int left, right, mid, kind, j;
+    int delta;
     for (int i = 0; i < sl; i++)
     {
         kind = r.Range(0, 5);
         if (kind < 2)
         {
-            left = r.Range(0, sl - 100);
+            left = r.Range(0, sl - 5);
             right = r.Range(left, sl - 1);
             mid = r.Range(left, right + 1);
             printf("1 %d %d %d\n", left, right, a[mid]);
         }
         else
         {
-            left = r.Range(0, sl - 100);
+            left = r.Range(0, sl - 5);
             right = r.Range(left, sl - 1);
-            printf("0 %d %d %d\n", left, right, r.Range(1, 100000));
+            delta = r.Range(1, 100);
+            for (j = left; j <= right; j++)
+            {
+                a[j] += delta;
+            }
+            printf("0 %d %d %d\n", left, right, delta);
         }
     }
     //system("pause");
