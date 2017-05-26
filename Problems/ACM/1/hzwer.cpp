@@ -38,18 +38,20 @@ void add(int a, int b, int c)
 {
     for (int i = a; i <= min(bl[a] * blo, b); i++)
     {
-        st[bl[a]].erase(v[i]);
         v[i] += c;
-        st[bl[a]].insert(v[i]);
     }
+    st[bl[a]].clear();
+    for (int i = (bl[a] - 1) * blo + 1; i <= min(bl[a] * blo, n); i++)
+        st[bl[a]].insert(v[i]);
     if (bl[a] != bl[b])
     {
         for (int i = (bl[b] - 1) * blo + 1; i <= b; i++)
         {
-            st[bl[b]].erase(v[i]);
             v[i] += c;
-            st[bl[b]].insert(v[i]);
         }
+        st[bl[b]].clear();
+        for (int i = (bl[b] - 1) * blo + 1; i <= min(bl[b] * blo, n); i++)
+            st[bl[b]].insert(v[i]);
     }
     for (int i = bl[a] + 1; i <= bl[b] - 1; i++)
         atag[i] += c;
@@ -85,12 +87,11 @@ int main()
 {
     freopen("lln.in", "r", stdin);
     freopen("lln.out", "w", stdout);
-    int tmp;
     n = read();
     blo = 1000;
     for (int i = 1; i <= n; i++)
         v[i] = read();
-    for (int i = 1; i <= n; i++)  
+    for (int i = 1; i <= n; i++)
     {
         bl[i] = (i - 1) / blo + 1;
         st[bl[i]].insert(v[i]);
@@ -101,13 +102,7 @@ int main()
         if (f == 0)
             add(a, b, c);
         if (f == 1)
-        {
-            tmp = query(a, b, c);
-            if (tmp == -1)
-                printf("impossible\n");
-            else
-                printf("%d\n", tmp);
-        }
+            printf("%d\n", query(a, b, c));
     }
     fclose(stdin);
     fclose(stdout);

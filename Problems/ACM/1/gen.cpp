@@ -7,6 +7,8 @@
 #include <set>
 using namespace std;
 typedef long long ll;
+int a[100010];
+set<int> s;
 
 class Random
 {
@@ -25,8 +27,15 @@ class Random
         return min + (max - min) * Value();
     }
 };
-int a[100010];
-set<int> s;
+int randll()
+{
+    int tmp = 0;
+    for (int i = 0; i < 30; i++)
+    {
+        tmp += rand();
+    }
+    return tmp;
+}
 
 int main(int argc, char **argv)
 {
@@ -34,7 +43,7 @@ int main(int argc, char **argv)
     //printf("%d\n", argv[1]);
     srand(atoi(argv[1]));
     int sl = atoi(argv[2]);
-    //printf("%d\n", atoi(argv[2]));
+    //printf("%d\n", RAND_MAX);
     //int sl = 50000;
     //srand(1517897);
     freopen("lln.in", "w", stdout);
@@ -42,11 +51,15 @@ int main(int argc, char **argv)
     int tmp;
     for (int i = 1; i <= sl; i++)
     {
-        tmp = r.Range(0, 1000000);
-        while (s.count(tmp))
-            tmp = r.Range(0, 1000000);
+        tmp = randll();
+        //tmp = r.Range(0, 1000000000);
+        /*while (s.count(tmp))
+        {
+            tmp = randll();
+            printf("%d ", tmp);
+        }*/
         a[i] = tmp;
-        s.insert(tmp);
+        //s.insert(tmp);
         printf("%d ", a[i]);
     }
     printf("\n");
@@ -59,13 +72,13 @@ int main(int argc, char **argv)
             left = r.Range(0, sl);
             right = r.Range(left, sl + 1);
             mid = r.Range(left, right + 1);
-            printf("2 %d %d %d\n", left, right, a[mid]);
+            printf("1 %d %d %d\n", left, right, a[mid]);
         }
         else
         {
             left = r.Range(0, sl);
             right = r.Range(left, sl + 1);
-            printf("1 %d %d %d\n", left, right, r.Range(1, 100000));
+            printf("0 %d %d %d\n", left, right, r.Range(1, 100000));
         }
     }
     //system("pause");

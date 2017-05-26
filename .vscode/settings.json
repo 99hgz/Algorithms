@@ -37,6 +37,7 @@
         "thread": "cpp",
         "valarray": "cpp",
         "chrono": "cpp",
-        "ratio": "cpp"
+        "ratio": "cpp",
+        "map": "cpp"
     }
 }
