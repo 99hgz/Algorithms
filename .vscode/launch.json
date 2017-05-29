@@ -6,7 +6,7 @@
             "type": "python",
             "request": "launch",
             "stopOnEntry": false,
-            "pythonPath": "C:\\Users\\hgz\\AppData\\Local\\Programs\\Python\\Python36",
+            "pythonPath": "Z:\\Users\\22528\\AppData\\Local\\Programs\\Python\\Python36",
             "program": "${file}",
             "cwd": "${fileDirname}",
             "env": {},
