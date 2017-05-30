@@ -1,7 +1,7 @@
 import os
 import random
 import time
-datasize = [1000, 1000, 1000, 1000, 1000, 10000, 10000, 10000, 10000, 10000]
+datasize = [1000, 1000, 1000, 1000, 1000, 70000, 70000, 70000, 70000, 70000]
 for i in range(10):
     print("data %d %d " % (i, datasize[i]))
     os.system('gen.cpp.exe ' + str(random.randint(545412, 2561540)) + ' ' +
@@ -10,7 +10,7 @@ for i in range(10):
     print("data size: %s " % (f.readline()), end='')
     f.close()
     start = time.clock()
-    os.system('lln.cpp.exe')
+    os.system('hgz.cpp.exe')
     end = time.clock()
     print("read: %f s" % (end - start))
     print()

@@ -7,6 +7,8 @@
 #include <set>
 using namespace std;
 typedef long long ll;
+ll a[100010];
+set<ll> s;
 
 class Random {
 public:
@@ -28,38 +30,41 @@ public:
     return min + (max - min) * Value();
   }
 };
-ll randll() { return ((rand() % 1000) + 2333333333); }
+int randll() { return ((rand() % 10000) + 2333333336); }
 
 int main(int argc, char **argv) {
   Random r;
   // printf("%d\n", argv[1]);
   srand(atoi(argv[1]));
-  int sl = atoi(argv[2]), sl2 = atoi(argv[3]);
+  int sl = atoi(argv[2]);
   // printf("%d\n", RAND_MAX);
-  // int sl = 10000, sl2 = 10000;
+  // int sl = 1000;
   // srand(1517897);
   freopen("lln.in", "w", stdout);
-  printf("%d %d\n", sl, sl2);
-  ll tmp;
+  printf("%d\n", sl);
+  int tmp;
   for (int i = 1; i <= sl; i++) {
     tmp = randll();
-    printf("%lld ", tmp);
+    // tmp = r.Range(0, 1000000000);
+    /*while (s.count(tmp))
+    {
+        tmp = randll();
+        printf("%d ", tmp);
+    }*/
+    a[i] = tmp;
+    // s.insert(tmp);
+    printf("%d ", a[i]);
   }
   printf("\n");
   int left, right, mid, kind, j;
   int delta;
-  for (int i = 0; i < sl2; i++) {
-    kind = r.Range(0, 5);
-    if (kind < 2) {
-      left = r.Range(0, sl - 5);
-      right = r.Range(left, sl - 1);
-      mid = r.Range(left, right + 1) - left + 1;
-      printf("Q %d %d %d\n", left, right, mid);
-    } else {
-      left = r.Range(0, sl - 5);
-      right = r.Range(left, sl - 1);
-      delta = r.Range(1, 10000000);
-      printf("C %d %d %d\n", left, right, delta);
+  for (int i = 0; i < sl; i++) {
+    left = r.Range(0, sl - 5);
+    right = r.Range(left, sl - 1);
+    mid = r.Range(left, right + 1);
+    printf("%d %d %d\n", left, right, a[mid]);
+    for (int j = left; j <= right; j++) {
+      a[j] = a[mid];
     }
   }
   // system("pause");
