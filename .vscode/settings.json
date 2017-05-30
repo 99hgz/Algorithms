@@ -38,6 +38,24 @@
         "valarray": "cpp",
         "chrono": "cpp",
         "ratio": "cpp",
-        "map": "cpp"
-    }
+        "map": "cpp",
+        "memory": "cpp",
+        "atomic": "cpp",
+        "cfenv": "cpp",
+        "cinttypes": "cpp",
+        "complex": "cpp",
+        "condition_variable": "cpp",
+        "csetjmp": "cpp",
+        "csignal": "cpp",
+        "cstdarg": "cpp",
+        "ctime": "cpp",
+        "fstream": "cpp",
+        "iomanip": "cpp",
+        "scoped_allocator": "cpp",
+        "sstream": "cpp",
+        "system_error": "cpp",
+        "typeindex": "cpp"
+    },
+    "python.linting.pylintEnabled": false,
+    "python.formatting.provider": "yapf"
 }
