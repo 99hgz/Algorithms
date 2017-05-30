@@ -30,7 +30,7 @@ public:
     return min + (max - min) * Value();
   }
 };
-int randll() { return ((rand() % 10000) + 2333333336); }
+ll randll() { return ((rand() % 10000) + 2333333336); }
 
 int main(int argc, char **argv) {
   Random r;
@@ -42,7 +42,7 @@ int main(int argc, char **argv) {
   // srand(1517897);
   freopen("lln.in", "w", stdout);
   printf("%d\n", sl);
-  int tmp;
+  ll tmp;
   for (int i = 1; i <= sl; i++) {
     tmp = randll();
     // tmp = r.Range(0, 1000000000);
@@ -53,7 +53,7 @@ int main(int argc, char **argv) {
     }*/
     a[i] = tmp;
     // s.insert(tmp);
-    printf("%d ", a[i]);
+    printf("%lld ", a[i]);
   }
   printf("\n");
   int left, right, mid, kind, j;
