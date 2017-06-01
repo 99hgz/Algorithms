@@ -65,14 +65,14 @@ int main(int argc, char **argv)
         kind = r.Range(0, 5);
         if (kind < 2)
         {
-            left = r.Range(0, sl - 5);
+            left = r.Range(1, sl - 5);
             right = r.Range(left, sl - 1);
             mid = r.Range(left, right + 1);
             printf("1 %d %d %d\n", left, right, a[mid]);
         }
         else
         {
-            left = r.Range(0, sl - 5);
+            left = r.Range(1, sl - 5);
             right = r.Range(left, sl - 1);
             delta = r.Range(1, 100);
             for (j = left; j <= right; j++)
