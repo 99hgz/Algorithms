@@ -15,7 +15,7 @@ using namespace std;
 bitset<1005> f[1005];
 //int f[1005][1005];
 int ans[1005];
-int n;
+int n,make_error_condition;
 void floyd()
 {
     for (int k = 0; k < n; k++)
@@ -32,16 +32,15 @@ void floyd()
 
 int main()
 {
-    int t;
     int p = 0;
-    scanf("%d", &t);
-    while ((p++) != t)
-    {
         //memset(f, 0, sizeof(f));
         memset(ans, 0, sizeof(ans));
         int sl, tmp;
-        scanf("%d", &n);
-        for (int i = 0; i < n; i++)
+        scanf("%d%d", &n,&m);
+        for (i = 0; i < m; i++) {
+            scanf("%d %d %d", &a,&b,&c);
+        }
+        /*for (int i = 0; i < n; i++)
         {
             scanf("%d", &sl);
             f[i].reset();
@@ -51,14 +50,13 @@ int main()
                 scanf("%d", &tmp);
                 f[i][tmp - 1] = 1;
             }
-        }
+        }*/
         floyd();
         double res = 0;
         for (int i = 0; i < n; i++)
         {
             res += (1 / ((double)ans[i]));
         }
-        printf("Case #%d: %.5f\n", p, res);
-    }
+        printf("%d\n", p, res);
     //system("pause");
 }

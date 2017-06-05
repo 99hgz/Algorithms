@@ -31,17 +31,13 @@ void queue_prim()
     priority_queue<node> que;
     while (!que.empty())
         que.pop();
-    for (int i = 1; i <= n; i++)
-    {
-        que.push(q[i][i - 1]);
-    }
     ans = 0;
     memset(vis, false, sizeof(vis));
-    for (int i = 0; i < q[well].size(); i++)
+    for (int i = 0; i < q[1].size(); i++)
     {
-        que.push(q[well][i]);
+        que.push(q[1][i]);
     }
-    vis[well] = true;
+    vis[1] = true;
     int edge = n - 1;
     node cur;
     while (edge--)
@@ -56,7 +52,7 @@ void queue_prim()
                 que.pop();
             }
         }
-        ans = ans + cur.w;
+        ans = max(ans, (LL)cur.w);
         vis[cur.v] = true;
         //printf("%d\n", cur.v);
         for (int i = 0; i < q[cur.v].size(); i++)
@@ -69,7 +65,7 @@ void queue_prim()
 
 int main()
 {
-    scanf("%d", &n);
+    scanf("%d %d", &n, &m);
     int i, j;
     int tmp[N];
     int u, v, w;
@@ -77,37 +73,17 @@ int main()
     node cur;
     for (i = 0; i <= n; i++)
         q[i].clear();
-    for (i = 1; i <= n; i++)
+    for (i = 1; i <= m; i++)
     {
-        scanf("%d", &tmp[i]);
-        if (tmp[i] < wellmin)
-        {
-            wellmin = min(wellmin, tmp[i]);
-            well = i;
-        }
-        //q[i].push_back(cur);
-    }
-    for (i = 1; i <= n; i++)
-    {
-        for (j = 1; j <= n; j++)
-        {
-            scanf("%d", &w);
-            if (i != j)
-            {
-                cur.v = j;
-                cur.w = w;
-                q[i].push_back(cur);
-            }
-            else
-            {
-                cur.v = j;
-                cur.w = tmp[i];
-                q[i].push_back(cur);
-            }
-        }
+        scanf("%d %d %d", &u, &v, &w);
+        cur.v = v;
+        cur.w = w;
+        q[u].push_back(cur);
+        cur.v = u;
+        q[v].push_back(cur);
     }
     queue_prim();
-    printf("%lld\n", ans + wellmin);
+    printf("%d %lld\n", n - 1, ans);
     system("pause");
     return 0;
 }
