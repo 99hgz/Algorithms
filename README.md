@@ -19,8 +19,12 @@
 - √ Splay
 - √ 并查集
 - √ 逆元/扩欧
-- × Floyd-Warshall
-- × Tarjan
-- × 2-SAT
+- √ Floyd-Warshall
+- √ Prim
+- √ Kruskal
+- √ Tarjan
+- √ SPFA
+- √ 排列数
 - √ 线性基
 - √ 树-重心
+- × 2-SAT
