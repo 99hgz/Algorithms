@@ -1,48 +1,80 @@
+#include <cstdlib>
 #include <cstdio>
 #include <cstring>
-#include <cstdlib>
+
 #include <algorithm>
+#include <queue>
+
 using namespace std;
 typedef long long ll;
 
-struct queNode {
-  int v, d;
+struct queNode
+{
+  int n, d;
 } quenode;
-struct vecNode {
+struct vecNode
+{
   int v, w;
-  bool operator<(const vecNode &dd) const { return w > vecNode.w; }
 } vecnode;
+struct cmp
+{
+  bool operator()(queNode a, queNode b) { return a.d > b.d; }
+};
 
-int main() {
-  scanf("%d %d %d %d", &n, &m, &s, &e);
-  for (i = 1; i <= m; i++) {
-    scanf("%d %d &d", &a, &b, &c);
-    vecnode.v = b;
-    vecnode.w = c;
-    vec[a].push(vecnode);
+int n, m, s, e, a, b, c;
+bool visited[10010];
+int d[10010];
+vector<vecNode> vec[10010];
+priority_queue<queNode, vector<queNode>, cmp> q;
+
+void addedge(int u, int v, int w)
+{
+  vecnode.v = v;
+  vecnode.w = w;
+  vec[u].push_back(vecnode);
+}
+
+int dijkstra(int s, int e)
+{
+  for (int i = 1; i <= n; i++)
+  {
+    d[i] = 2147483647;
+    visited[i] = false;
   }
-
   quenode.d = 0;
   quenode.n = s;
-  priority_queue<queNode> q;
+  d[s] = 0;
   q.push(quenode);
   queNode tmp;
-  while (!q.empty()) {
+  while (!q.empty())
+  {
     tmp = q.top();
     q.pop();
     if (visited[tmp.n])
       continue;
     visited[tmp.n] = true;
-    for (i = 0; i < vec[tmp.n].size(); i++) {
-      if (d[vec[tmp.n][i].v] > d[tmp.n] + vec[tmp.n][i].w) {
-        d[vec[tmp.n][i].v] = d[tmp.n] + vec[tmp.n][i].w;
-        quenode.v = d[vec[tmp.n][i].v];
-        quenode.d = vec[tmp.n][i].v;
+    for (int i = 0; i < vec[tmp.n].size(); i++)
+    {
+      int u = tmp.n, v = vec[tmp.n][i].v;
+      if ((!visited[v]) && (d[v] > d[u] + vec[u][i].w))
+      {
+        d[v] = d[u] + vec[u][i].w;
+        quenode.d = d[v];
+        quenode.n = v;
         q.push(quenode);
       }
     }
   }
-  printf("%d\n", d[e]);
-  system("pause");
+}
+
+int main()
+{
+  scanf("%d%d%d", &n, &m, &s);
+  for (int i = 1; i <= m; i++)
+  {
+    scanf("%d%d%d", &a, &b, &c);
+    addedge(a, b, c);
+  }
+  printf("%d\n", dijkstra(s, n));
   return 0;
 }
