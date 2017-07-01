@@ -1,17 +1,19 @@
+//HDU 2665
 #include <cstdio>
 #include <cstring>
 #include <cstdlib>
 #include <algorithm>
+#include <cstring>
 using namespace std;
 typedef long long ll;
 
 int bh, n, tn, m, l, r, G;
-int root[10000];
-int a[10000], Hash[10000];
+int root[100010];
+int a[100011], Hash[100011];
 struct NODe
 {
     int lson, rson, v;
-} tree[10000];
+} tree[2000010];
 
 int build(int l, int r)
 {
@@ -23,8 +25,8 @@ int build(int l, int r)
         tree[bh].v = 0;
         return bh;
     }
-    tree[bh].lson = build(l, (l + r) >> 1);
-    tree[bh].rson = build(((l + r) >> 1) + 1, r);
+    tree[tbh].lson = build(l, (l + r) >> 1);
+    tree[tbh].rson = build(((l + r) >> 1) + 1, r);
     return tbh;
 }
 
@@ -45,7 +47,7 @@ int update(int i, int l, int r, int old)
         tbh = bh;
         tree[bh].v = tree[old].v + 1;
         tree[bh].lson = tree[old].lson;
-        tree[bh].rson = update(i, mid + 1, r, tree[old].rson);
+        tree[tbh].rson = update(i, mid + 1, r, tree[old].rson);
     }
     else
     {
@@ -53,10 +55,11 @@ int update(int i, int l, int r, int old)
         tbh = bh;
         tree[bh].v = tree[old].v + 1;
         tree[bh].rson = tree[old].rson;
-        tree[bh].lson = update(i, l, mid, tree[old].lson);
+        tree[tbh].lson = update(i, l, mid, tree[old].lson);
     }
     printf("%d %d %d %d", i, l, r, old);
     printf(" change->%d\n", tbh);
+    printf("lson=%d rson=%d\n", tree[tbh].lson, tree[tbh].rson);
     return tbh;
 }
 
@@ -75,34 +78,43 @@ int query(int G, int bh1, int bh2, int l, int r)
     }
     else
     {
-        return query(G, tree[bh1].rson, tree[bh2].rson, mid + 1, r);
+        return query(G - lsl, tree[bh1].rson, tree[bh2].rson, mid + 1, r);
     }
 }
 
 int main()
 {
-    bh = 0;
-    scanf("%d%d", &n, &m);
-    a[0] = -1054;
-    for (int i = 1; i <= n; i++)
+    int t;
+    scanf("%d", &t);
+    while (t--)
     {
-        scanf("%d", &a[i]);
-        Hash[i] = a[i];
+        bh = 0;
+        scanf("%d%d", &n, &m);
+        a[0] = -1054;
+        memset(tree, 0, sizeof(tree));
+        for (int i = 1; i <= n; i++)
+        {
+            scanf("%d", &a[i]);
+            Hash[i] = a[i];
+        }
+        sort(Hash + 1, Hash + n + 1);
+        int tn = unique(Hash + 1, Hash + n + 1) - Hash - 1;
+        //int tn = n;
+        root[0] = build(1, tn);
+        for (int i = 1; i <= n; i++)
+        {
+            int x = lower_bound(Hash + 1, Hash + tn + 1, a[i]) - Hash;
+            root[i] = update(x, 1, tn, root[i - 1]);
+            //root[i] = update(a[i], 1, tn, root[i - 1]);
+        }
+        for (int i = 1; i <= m; i++)
+        {
+            scanf("%d%d%d", &l, &r, &G);
+            printf("%d\n", Hash[query(G, root[l - 1], root[r], 1, tn)]);
+            //printf("%d\n", query(G, root[l - 1], root[r], 1, tn));
+        }
     }
-    sort(Hash + 1, Hash + n + 1);
-    //int tn = unique(Hash + 1, Hash + n + 1) - Hash - 1;
-    int tn = n;
-    root[0] = build(1, tn);
-    for (int i = 1; i <= n; i++)
-    {
-        //int x = lower_bound(Hash + 1, Hash + tn + 1, a[i]) - Hash;
-        root[i] = update(a[i], 1, tn, root[i - 1]);
-    }
-    for (int i = 1; i <= m; i++)
-    {
-        scanf("%d%d%d", &l, &r, &G);
-        printf("%d\n", Hash[query(G, root[l - 1], root[r], 1, tn)]);
-    }
-    system("pause");
+    //system("pause");
+    //scanf("%d", &n);
     return 0;
 }
