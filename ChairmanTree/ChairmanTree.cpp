@@ -18,7 +18,7 @@ struct NODe
 int build(int l, int r)
 {
     bh++;
-    printf("build:%d %d %d\n", l, r, bh);
+    //printf("build:%d %d %d\n", l, r, bh);
     int tbh = bh;
     if (l == r)
     {
@@ -57,15 +57,15 @@ int update(int i, int l, int r, int old)
         tree[bh].rson = tree[old].rson;
         tree[tbh].lson = update(i, l, mid, tree[old].lson);
     }
-    printf("%d %d %d %d", i, l, r, old);
-    printf(" change->%d\n", tbh);
-    printf("lson=%d rson=%d\n", tree[tbh].lson, tree[tbh].rson);
+    //printf("%d %d %d %d", i, l, r, old);
+    //printf(" change->%d\n", tbh);
+    //printf("lson=%d rson=%d\n", tree[tbh].lson, tree[tbh].rson);
     return tbh;
 }
 
 int query(int G, int bh1, int bh2, int l, int r)
 {
-    printf("%d %d %d %d %d\n", G, bh1, bh2, l, r);
+    //printf("%d %d %d %d %d\n", G, bh1, bh2, l, r);
     if (l == r)
     {
         return l;
