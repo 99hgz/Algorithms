@@ -34,7 +34,7 @@ void addedge(int u, int v, int w)
   vec[u].push_back(vecnode);
 }
 
-int dijkstra(int s, int e)
+int dijkstra(int s)
 {
   for (int i = 1; i <= n; i++)
   {
@@ -75,6 +75,9 @@ int main()
     scanf("%d%d%d", &a, &b, &c);
     addedge(a, b, c);
   }
-  printf("%d\n", dijkstra(s, n));
+  dijkstra(s);
+  for (int i = 1; i <= n - 1; i++)
+    printf("%d ", d[i]);
+  printf("%d\n", d[n]);
   return 0;
 }
