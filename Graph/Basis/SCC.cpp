@@ -1,10 +1,11 @@
 /*
  * @key word:强联通分量
+ * @缩点请见/Problems/1051
  * @已测试:http://acm.hdu.edu.cn/showproblem.php?pid=1269
  * @Author: hgz
  * @Date: 2017-07-10 21:14:01
  * @Last Modified by: hgz
- * @Last Modified time: 2017-07-10 22:08:33
+ * @Last Modified time: 2017-07-11 22:44:30
  */
 #include <cstdio>
 #include <cstring>
@@ -36,7 +37,7 @@ void tarjan(int u, int fa)
             tarjan(v, u);
             low[u] = min(low[u], low[v]);
         }
-        else if (instack[u])
+        else if (instack[v])
         {
             low[u] = min(low[u], dfn[v]);
         }
