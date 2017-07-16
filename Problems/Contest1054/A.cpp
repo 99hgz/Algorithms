@@ -8,13 +8,16 @@
 using namespace std;
 typedef long long ll;
 
-struct queNode {
+struct queNode
+{
   int n, d;
 } quenode;
-struct vecNode {
+struct vecNode
+{
   int v, w;
 } vecnode;
-struct cmp {
+struct cmp
+{
   bool operator()(queNode a, queNode b) { return a.d > b.d; }
 };
 
@@ -28,10 +31,12 @@ priority_queue<queNode, vector<queNode>, cmp> q;
 
 int calc_V(int i, int j, int fx) { return (((i - 1) * w + j - 1) * 4 + fx); }
 
-void addedge(int u, int vi, int vj, int fx, int turn) {
+void addedge(int u, int vi, int vj, int fx, int turn)
+{ //fx现在朝向，turn需要向那个方向转
   // if ((a[vi][vj] == 4) && ((vi != h) || (vj != w)))
   //  return;
-  if ((vi > 0) && (vi <= h) && (vj > 0) && (vj <= w)) {
+  if ((vi > 0) && (vi <= h) && (vj > 0) && (vj <= w))
+  {
     int d = calc_V(vi, vj, fx);
     // printf("addedge:%d %d %d %d\n", u, d, vi, vj, fx);
     vec[u].push_back((vecNode){
@@ -39,8 +44,10 @@ void addedge(int u, int vi, int vj, int fx, int turn) {
   }
 }
 
-int dijkstra() {
-  for (int i = 0; i <= n; i++) {
+int dijkstra()
+{
+  for (int i = 0; i <= n; i++)
+  {
     d[i] = 2147483647;
     visited[i] = false;
   }
@@ -63,15 +70,18 @@ int dijkstra() {
   q.push(quenode);
 
   queNode tmp;
-  while (!q.empty()) {
+  while (!q.empty())
+  {
     tmp = q.top();
     q.pop();
     if (visited[tmp.n])
       continue;
     visited[tmp.n] = true;
-    for (int i = 0; i < vec[tmp.n].size(); i++) {
+    for (int i = 0; i < vec[tmp.n].size(); i++)
+    {
       int u = tmp.n, v = vec[tmp.n][i].v;
-      if ((!visited[v]) && (d[v] > d[u] + vec[u][i].w)) {
+      if ((!visited[v]) && (d[v] > d[u] + vec[u][i].w))
+      {
         d[v] = d[u] + vec[u][i].w;
         quenode.d = d[v];
         quenode.n = v;
@@ -81,18 +91,23 @@ int dijkstra() {
   }
 }
 
-int main() {
+int main()
+{
   scanf("%d%d", &w, &h);
   n = w * h * 4;
   tot = 0;
-  for (int i = 1; i <= h; i++) {
-    for (int j = 1; j <= w; j++) {
+  for (int i = 1; i <= h; i++)
+  {
+    for (int j = 1; j <= w; j++)
+    {
       scanf("%d", &a[i][j]);
     }
   }
   scanf("%d%d%d%d", &c[0], &c[1], &c[2], &c[3]);
-  for (int i = 1; i <= h; i++) {
-    for (int j = 1; j <= w; j++) {
+  for (int i = 1; i <= h; i++)
+  {
+    for (int j = 1; j <= w; j++)
+    {
       d0 = calc_V(i, j, 0);
       d1 = calc_V(i, j, 1);
       d2 = calc_V(i, j, 2);
