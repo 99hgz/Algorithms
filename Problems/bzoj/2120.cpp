@@ -6,20 +6,23 @@
 using namespace std;
 typedef long long ll;
 
-int n, m, len;
-int c[50010], part[50010];
-ll num[50010], ans;
-ll gcd(ll a, ll b) { return b == 0 ? a : gcd(b, a % b); }
-ll sqr(ll x) { return x * x; }
+int n, m, len, quenum, changenum;
+int c[100100], part[100100], col[100100];
+ll ans, total[100100];
+
 struct node
 {
-    int l, r, id;
-    ll a, b;
-} que[50010];
-
+    int l, r, id, x;
+    ll a;
+} que[100100];
+struct NODE
+{
+    int x, y, o;
+} chg[100100];
+int l = 1, r = 0, cur = 0;
 bool cmp(node a, node b)
 {
-    return (part[a.l] < part[b.l]) || ((part[a.l] == part[b.l]) && (a.r < b.r)) || ((part[a.l] == part[b.l]) && (a.r == b.r) && (a.x < b.x)) ；
+    return ((part[a.l] < part[b.l]) || ((part[a.l] == part[b.l]) && (a.r < b.r)) || ((part[a.l] == part[b.l]) && (a.r == b.r) && (a.x < b.x)));
 }
 bool cmpwithid(node a, node b)
 {
@@ -27,9 +30,32 @@ bool cmpwithid(node a, node b)
 }
 void update(int i, int add)
 {
-    ans -= sqr(num[c[i]]);
-    num[c[i]] += add;
-    ans += sqr(num[c[i]]);
+    printf("update:%d %d\n", i, add);
+    int tmp = total[col[i]];
+    total[col[i]] += add;
+    if (tmp == 0 && total[col[i]] == 1)
+        ans++;
+    if (tmp == 1 && total[col[i]] == 0)
+        ans--;
+}
+
+void change(int time, int color)
+{
+    printf("change:%d %d\n", time, color);
+    if ((que[time].l >= l) && (que[time].r <= r))
+    {
+        total[col[chg[time].x]]--;
+        if (total[col[chg[time].x]] == 0)
+            ans--;
+        col[chg[time].x] = color;
+        total[color]++;
+        if (total[color] == 1)
+            ans++;
+    }
+    else
+    {
+        col[chg[time].x] = color;
+    }
 }
 
 int main()
@@ -40,59 +66,55 @@ int main()
     for (int i = 1; i <= n; i++)
     {
         scanf("%d", &c[i]);
+        col[i] = c[i];
         part[i] = (i - 1) / len + 1;
     }
     char ch;
+    int tmpa, tmpb;
     for (int i = 1; i <= m; i++)
     {
-        scanf("%c", &ch);
-        printf("%c\n", ch);
+        char ch = getchar();
+        while (ch < 'A' || ch > 'Z')
+            ch = getchar();
+        scanf("%d%d", &tmpa, &tmpb);
         if (ch == 'Q')
         {
             quenum++;
-            scanf("%d %d", &que[i].l, &que[i].r);
-            que[i].x = changenum;
-            que[i].id = i;
+            que[quenum].l = tmpa;
+            que[quenum].r = tmpb;
+            que[quenum].x = changenum;
+            que[quenum].id = i;
         }
         else
         {
             changenum++;
-            scanf("%d%d", &chg[i].x, &chg[i].y);
-            chg[i].o = c[chg[i].x];
-            c[chg[i].x] = chg[i].y;
+            chg[changenum].x = tmpa;
+            chg[changenum].y = tmpb;
+            chg[changenum].o = c[chg[i].x];
+            c[chg[changenum].x] = chg[i].y;
         }
     }
     sort(que + 1, que + quenum + 1, cmp);
-    int l = 1, r = 0, cur = 0;
-    for (int i = 1; i <= m; i++)
+
+    for (int i = 1; i <= quenum; i++)
     {
         for (; cur < que[i].x; cur++)
-        {
-            change(chg[i].x + 1, chg[i].y);
-        }
+            change(cur + 1, chg[cur + 1].y);
         for (; cur > que[i].x; cur--)
-        {
-            change(chg[i].x, chg[i].o);
-        }
+            change(cur, chg[cur].o);
         for (; r < que[i].r; r++)
-            update(r + 1);
+            update(r + 1, 1);
         for (; r > que[i].r; r--)
-            update(r);
+            update(r, -1);
         for (; l > que[i].l; l--)
-            update(l - 1);
+            update(l - 1, 1);
         for (; l < que[i].l; l++)
-            update(l);
-        if (que[i].l == que[i].r)
-        {
-            que[i].a = 0;
-            que[i].b = 1;
-            continue;
-        }
-
+            update(l, -1);
         que[i].a = ans;
+        printf("%d %d\n", i, ans);
     }
-    sort(que + 1, que + 1 + m, cmpwithid);
-    for (int i = 1; i <= m; i++)
+    sort(que + 1, que + 1 + quenum, cmpwithid);
+    for (int i = 1; i <= quenum; i++)
     {
         printf("%lld\n", que[i].a);
     }
