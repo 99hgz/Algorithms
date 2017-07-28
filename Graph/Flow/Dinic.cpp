@@ -77,7 +77,11 @@ double pos(int i, int j) {
   return sqrt((double)(x[i] - x[j]) * (double)(x[i] - x[j]) +
               (double)(y[i] - y[j]) * (double)(y[i] - y[j]));
 }
-
+void init() {
+  R = 0;
+  for (int i = 0; i <= T; i++)
+    tab[i].clear();
+}
 int main() {
   /*while (scanf("%d%d%d%d", &N, &NP, &NC, &M) != EOF) {
     R = 0;
