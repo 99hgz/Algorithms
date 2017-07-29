@@ -7,7 +7,7 @@
 
 using namespace std;
 typedef long long ll;
-
+int u, v;
 struct queNode
 {
     int n, d;
