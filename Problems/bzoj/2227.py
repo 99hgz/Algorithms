@@ -9,6 +9,9 @@ while (t>0):
     num=raw_input().split()
     n=int(num[0])
     k=int(num[1])
+    if n>k:
+        print 0,1
+        continue
     ans=pow(k+1,n-1)*(k+1-n)
     ans2=pow(k,n)
     gcd1=gcd(ans,ans2)
