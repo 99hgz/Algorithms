@@ -1,4 +1,7 @@
 /*
+ * @key word:莫队
+ * @已测试
+ * 带修改的莫队:bzoj/2120.cpp
  * @Author: hgz 
  * @Date: 2017-07-25 21:19:18 
  * @Last Modified by:   hgz 
