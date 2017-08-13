@@ -20,7 +20,7 @@
             "command": "fpc",
             "isShellCommand": true,
             "args": [
-                "${relativeFile}",
+                "${relativeFile}"
             ],
             "showOutput": "always"
         }

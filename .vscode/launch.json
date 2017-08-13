@@ -5,16 +5,16 @@
             "name": "Python",
             "type": "python",
             "request": "launch",
-            "stopOnEntry": false,
-            "pythonPath": "Z:\\Users\\22528\\AppData\\Local\\Programs\\Python\\Python36",
+            "stopOnEntry": true,
+            "pythonPath": "${config:python.pythonPath}",
             "program": "${file}",
-            "cwd": "${fileDirname}",
+            "cwd": "${workspaceRoot}",
             "env": {},
+            "console": "externalTerminal",
             "envFile": "${workspaceRoot}/.env",
             "debugOptions": [
                 "WaitOnAbnormalExit",
-                "WaitOnNormalExit",
-                "RedirectOutput"
+                "WaitOnNormalExit"
             ]
         },
         {
@@ -28,9 +28,6 @@
             "environment": [],
             "externalConsole": true,
             "preLaunchTask": "g++",
-            "debugOptions": [
-                "RedirectOutput"
-            ],
             "linux": {
                 "MIMode": "gdb",
                 "setupCommands": [
@@ -46,7 +43,7 @@
             },
             "windows": {
                 "MIMode": "gdb",
-                "miDebuggerPath": "E:\\MinGW\\bin\\gdb.exe",
+                "miDebuggerPath": "D:\\MinGW\\bin\\gdb.exe",
                 "setupCommands": [
                     {
                         "description": "Enable pretty-printing for gdb",
