@@ -1,75 +1,132 @@
-#include <cstdio>
-#include <cstring>
-#include <cstdlib>
-#include <cmath>
 #include <iostream>
-#include <algorithm>
-#include <vector>
-#define maxn 200010
-#define mod 1000007
-
+#include <cstdio>
+#include <cstdlib>
+#include <cstring>
+#define inf 0x7fffffff
+#define T 1001
 using namespace std;
-
-int hash1[maxn];
-unsigned long long hash2[maxn];
-int a[maxn];
-int b[maxn];
-int p1[maxn];
-unsigned long long p2[maxn];
-int n, T, k;
-vector<pair<unsigned long long, int>> v[mod];
-int hash3;
-unsigned long long Hash;
-
-bool check(int l, int r)
+int head[1005], q[1005], h[1005];
+int cnt, ans, mx, mid;
+int n, k, mp[1005][1005];
+struct data
 {
-    for (int i = 0; i < v[hash3].size(); i++)
-        if (v[hash3][i].first == Hash && v[hash3][i].second >= l && v[hash3][i].second + k - 1 <= r)
-            return 1;
-    return 0;
-}
-
-int calc1(int l, int r)
+    int to, next, v;
+} e[500001];
+void ins(int u, int v, int w)
 {
-    return ((long long)hash1[r] - (long long)hash1[l - 1] * p1[r - l + 1] % mod + mod) % mod;
+    e[++cnt].to = v;
+    e[cnt].next = head[u];
+    e[cnt].v = w;
+    head[u] = cnt;
 }
-
-unsigned long long calc2(int l, int r)
+void insert(int u, int v, int w)
 {
-    return hash2[r] - hash2[l - 1] * p2[r - l + 1];
+    ins(u, v, w);
+    ins(v, u, 0);
 }
-
+bool bfs()
+{
+    int t = 0, w = 1, i, now;
+    memset(h, -1, sizeof(h));
+    q[0] = 0;
+    h[0] = 0;
+    while (t < w)
+    {
+        now = q[t];
+        t++;
+        i = head[now];
+        while (i)
+        {
+            if (e[i].v && h[e[i].to] == -1)
+            {
+                h[e[i].to] = h[now] + 1;
+                q[w++] = e[i].to;
+            }
+            i = e[i].next;
+        }
+    }
+    return h[T] == -1 ? 0 : 1;
+}
+int dfs(int x, int f)
+{
+    if (x == T)
+        return f;
+    int w, used = 0, i;
+    i = head[x];
+    while (i)
+    {
+        if (e[i].v && h[e[i].to] == h[x] + 1)
+        {
+            w = f - used;
+            w = dfs(e[i].to, min(w, e[i].v));
+            e[i].v -= w;
+            e[i ^ 1].v += w;
+            used += w;
+            if (used == f)
+                return f;
+        }
+        i = e[i].next;
+    }
+    if (!used)
+        h[x] = -1;
+    return used;
+}
+void dinic()
+{
+    while (bfs())
+        ans += dfs(0, inf);
+}
+void ini()
+{
+    scanf("%d%d", &n, &k);
+    for (int i = 1; i <= n; i++)
+    {
+        char ch[51];
+        scanf("%s", ch);
+        for (int j = 1; j <= n; j++)
+            if (ch[j - 1] == 'Y')
+                mp[i][j] = 1;
+    }
+}
+void build()
+{
+    cnt = 1;
+    memset(head, 0, sizeof(head));
+    for (int i = 1; i <= n; i++)
+        insert(0, i, mid);
+    for (int i = 1; i <= n; i++)
+        insert(i, i + 500, k);
+    for (int i = 1; i <= n; i++)
+        insert(n + i + 500, n + i, k);
+    for (int i = 1; i <= n; i++)
+        insert(n + i, T, mid);
+    for (int i = 1; i <= n; i++)
+        for (int j = 1; j <= n; j++)
+            if (mp[i][j])
+                insert(i, n + j, 1);
+            else
+                insert(i + 500, n + j + 500, 1);
+}
 int main()
 {
-    scanf("%d%d%d", &n, &T, &k);
-    for (int i = 1; i <= n; i++)
-        scanf("%d", &a[i]);
-    p1[0] = 1;
-    p2[0] = 1;
-    for (int i = 1; i <= n; i++)
-        p1[i] = ((long long)p1[i - 1] * 233333) % mod, p2[i] = p2[i - 1] * 10000007;
-    for (int i = 1; i <= n; i++)
-        hash1[i] = ((long long)hash1[i - 1] * 233333 + a[i]) % mod, hash2[i] = hash2[i - 1] * 10000007 + a[i];
-    for (int i = 1; i + k - 1 <= n; i++)
+    ini();
+    int l = 0, r = 50;
+    while (l <= r)
     {
-        v[calc1(i, i + k - 1)].push_back(make_pair(calc2(i, i + k - 1), i));
-        printf("%d %lld\n", calc1(i, i + k - 1), calc2(i, i + k - 1));
-    }
-    while (T--)
-    {
-        int l, r;
-        scanf("%d%d", &l, &r);
-        for (int j = 1; j <= k; j++)
-            scanf("%d", &b[j]);
-        hash3 = 0, Hash = 0;
-        for (int j = 1; j <= k; j++)
-            hash3 = ((long long)hash3 * 233333 + b[j]) % mod, Hash = Hash * 10000007 + b[j];
-        printf("%d %lld\n", hash3, Hash);
-        if (check(l, r))
-            printf("No\n");
+        mid = (l + r) >> 1;
+        build();
+        ans = 0;
+        dinic();
+        printf("%d\n", ans);
+        if (ans >= n * mid)
+        {
+            mx = mid;
+            l = mid + 1;
+        }
         else
-            printf("Yes\n");
+            r = mid - 1;
     }
+    printf("%d", mx);
     system("pause");
     return 0;
 }

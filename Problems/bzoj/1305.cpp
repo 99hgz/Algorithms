@@ -5,6 +5,7 @@
 #include <vector>
 #include <queue>
 #include <cmath>
+#define inf 0x7fffffff
 using namespace std;
 int n;
 double d;
@@ -22,6 +23,7 @@ int current[509];
 int ans;
 void addedge(int u, int v, int cap)
 {
+    //printf("%d %d\n", u, v);
     tab[u].push_back(R);
     es[R++] = Edge(u, v, cap); // 正向边
     tab[v].push_back(R);
@@ -32,7 +34,7 @@ int BFS()
 {
     queue<int> q;
     q.push(S);
-    memset(dis, 0x3f, sizeof(dis));
+    memset(dis, 0x3f3f3f3f, sizeof(dis));
     dis[S] = 0;
     while (!q.empty())
     {
@@ -92,7 +94,6 @@ void init()
     for (int i = 0; i <= T; i++)
         tab[i].clear();
 }
-
 int main()
 {
     int k;
@@ -106,9 +107,9 @@ int main()
     while (l <= r)
     {
         int mid = (l + r) >> 1;
-        R = 0;
         S = n * 4 + 1;
         T = n * 4 + 2;
+        R = 0;
         for (int i = 1; i <= n * 4 + 2; i++)
         {
             tab[i].clear();
@@ -127,9 +128,13 @@ int main()
                 }
             }
         }
-        for (int i = 1; i <= 2 * n; i++)
+        for (int i = 1; i <= n; i++)
         {
             addedge(i, i + 2 * n, k);
+        }
+        for (int i = 1; i <= n; i++)
+        {
+            addedge(i + 3 * n, i + n, k);
         }
         for (int i = 1; i <= n; i++)
         {
@@ -139,7 +144,9 @@ int main()
         {
             addedge(i, T, mid);
         }
-        if (DINIC() >= n * mid)
+        int tmp = DINIC();
+        //printf("%d %d %d\n", l, r, tmp);
+        if (tmp >= n * mid)
         {
             ans = mid;
             l = mid + 1;
