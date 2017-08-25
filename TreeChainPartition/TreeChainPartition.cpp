@@ -17,7 +17,8 @@
 using namespace std;
 typedef long long ll;
 
-struct typeofmax {
+struct typeofmax
+{
   int num, bh;
 };
 int hson[MAXN], hasson[MAXN], dep[MAXN], tid[MAXN], v[MAXN], top[MAXN],
@@ -30,19 +31,23 @@ int n, a, b, m, global_ans_sum, global_ans_max, totaltid;
 
 void addedge(int a, int b) { path[a].push_back(b); }
 
-void dfs(int point, int deep, int fa) {
+void dfs(int point, int deep, int fa)
+{
   parent[point] = fa;
   dep[point] = deep;
   visited[point] = true;
   typeofmax maxson;
   maxson.num = -40000;
   maxson.bh = point;
-  for (int i = 0; i < path[point].size(); i++) {
+  for (int i = 0; i < path[point].size(); i++)
+  {
     int ngoto = path[point][i];
-    if (!visited[ngoto]) {
+    if (!visited[ngoto])
+    {
       dfs(ngoto, deep + 1, point);
       hasson[point] += hasson[ngoto] + 1;
-      if ((hasson[ngoto] + 1) > maxson.num) {
+      if ((hasson[ngoto] + 1) > maxson.num)
+      {
         maxson.num = hasson[ngoto] + 1;
         maxson.bh = ngoto;
       }
@@ -52,7 +57,8 @@ void dfs(int point, int deep, int fa) {
   visited[point] = false;
 }
 
-void dfs1(int point, int pointtop) {
+void dfs1(int point, int pointtop)
+{
   if (visited[point])
     return;
   tid[point] = ++totaltid;
@@ -60,10 +66,13 @@ void dfs1(int point, int pointtop) {
   top[point] = pointtop;
   visited[point] = true;
   dfs1(hson[point], pointtop);
-  for (int i = 0; i < path[point].size(); i++) {
+  for (int i = 0; i < path[point].size(); i++)
+  {
     int ngoto = path[point][i];
-    if (!visited[ngoto]) {
-      if (hson[point] != ngoto) {
+    if (!visited[ngoto])
+    {
+      if (hson[point] != ngoto)
+      {
         dfs1(ngoto, ngoto);
       }
     }
@@ -71,13 +80,16 @@ void dfs1(int point, int pointtop) {
   visited[point] = false;
 }
 
-void up(int bh) {
+void up(int bh)
+{
   Max[bh] = max(Max[bh * 2], Max[bh * 2 + 1]);
   sum[bh] = sum[bh * 2] + sum[bh * 2 + 1];
 }
 
-void build_tree(int bh, int l, int r) {
-  if (l == r) {
+void build_tree(int bh, int l, int r)
+{
+  if (l == r)
+  {
     Max[bh] = sum[bh] = v[number[l]];
     return;
   }
@@ -86,52 +98,71 @@ void build_tree(int bh, int l, int r) {
   up(bh);
 }
 
-void change_tree(int bh, int u, int v1, int l, int r, int G) {
-  if (u == l && v1 == r) {
+void change_tree(int bh, int u, int v1, int l, int r, int G)
+{
+  if (u == l && v1 == r)
+  {
     v[number[l]] = G;
     Max[bh] = sum[bh] = G;
     return;
   }
   int mid = (u + v1) >> 1;
-  if (r <= mid) {
+  if (r <= mid)
+  {
     change_tree(bh * 2, u, mid, l, r, G);
-  } else if (l > mid) {
+  }
+  else if (l > mid)
+  {
     change_tree(bh * 2 + 1, mid + 1, v1, l, r, G);
-  } else {
+  }
+  else
+  {
     change_tree(bh * 2, u, mid, l, mid, G);
     change_tree(bh * 2 + 1, mid + 1, v1, mid + 1, r, G);
   }
   up(bh);
 }
 
-void query_tree(int bh, int u, int v, int l, int r) {
+void query_tree(int bh, int u, int v, int l, int r)
+{
   if (l > r)
     swap(l, r);
-  if (u == l && v == r) {
+  if (u == l && v == r)
+  {
     global_ans_sum += sum[bh];
     global_ans_max = max(global_ans_max, Max[bh]);
     return;
   }
   int mid = (u + v) >> 1;
-  if (r <= mid) {
+  if (r <= mid)
+  {
     query_tree(bh * 2, u, mid, l, r);
-  } else if (l > mid) {
+  }
+  else if (l > mid)
+  {
     query_tree(bh * 2 + 1, mid + 1, v, l, r);
-  } else {
+  }
+  else
+  {
     query_tree(bh * 2, u, mid, l, mid);
     query_tree(bh * 2 + 1, mid + 1, v, mid + 1, r);
   }
 }
 
-int querymax(int a, int b) {
+int querymax(int a, int b)
+{
   int ans = -40000;
-  while (top[a] != top[b]) {
+  while (top[a] != top[b])
+  {
     if (dep[top[a]] > dep[top[b]])
       swap(a, b);
-    if (top[b] == b) {
+    if (top[b] == b)
+    {
       ans = max(ans, v[b]);
       b = parent[b];
-    } else {
+    }
+    else
+    {
       global_ans_sum = 0;
       global_ans_max = -40000;
       // if (tid[b]>tid[top[b]])
@@ -149,18 +180,23 @@ int querymax(int a, int b) {
   return ans;
 }
 
-int querysum(int a, int b) {
+int querysum(int a, int b)
+{
   int ans = 0;
   // bool usedparent1 = false;
-  while (top[a] != top[b]) {
+  while (top[a] != top[b])
+  {
     if (dep[top[a]] > dep[top[b]])
       swap(a, b);
-    if (top[b] == b) {
+    if (top[b] == b)
+    {
       ans += v[b];
       /*if (b == 1)
           usedparent1 = true;*/
       b = parent[b];
-    } else {
+    }
+    else
+    {
       global_ans_sum = 0;
       global_ans_max = -0;
       query_tree(1, 1, n, tid[b], tid[top[b]]);
@@ -179,15 +215,18 @@ int querysum(int a, int b) {
   return ans;
 }
 
-int main() {
+int main()
+{
   // freopen("bzoj_10361.in", "r", stdin);
   scanf("%d", &n);
-  for (int i = 1; i < n; i++) {
+  for (int i = 1; i < n; i++)
+  {
     scanf("%d%d", &a, &b);
     addedge(a, b);
     addedge(b, a);
   }
-  for (int i = 1; i <= n; i++) {
+  for (int i = 1; i <= n; i++)
+  {
     scanf("%d", &v[i]);
   }
   dfs(1, 1, 1);
@@ -195,7 +234,8 @@ int main() {
   build_tree(1, 1, n);
   scanf("%d", &m);
   char s[100];
-  for (int j = 1; j <= m; j++) {
+  for (int j = 1; j <= m; j++)
+  {
     scanf("%s%d%d", s, &a, &b);
     if (s[1] == 'M')
       printf("%d\n", querymax(a, b));
