@@ -22,7 +22,7 @@ struct LB
     }
     bool insert(ll val)
     {
-        for (int i = 65; i >= 0; i--)
+        for (int i = 63; i >= 0; i--)
         {
             if ((val & (1LL << i)))
             {
@@ -39,7 +39,7 @@ struct LB
     ll max()
     {
         ll res = 0;
-        for (int i = 65; i >= 0; i--)
+        for (int i = 63; i >= 0; i--)
         {
             if ((res ^ f[i]) > res)
             {
