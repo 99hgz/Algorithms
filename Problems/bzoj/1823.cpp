@@ -1,12 +1,3 @@
-/*
- * @keyword：2SAT
- * @已测试：http://acm.hit.edu.cn/hoj/problem/view?id=1917
- * @Author: hgz 
- * @Date: 2017-08-29 18:26:55 
- * @Last Modified by: hgz
- * @Last Modified time: 2017-08-29 18:31:47
- * 参考输入将至，我将开始控制，至死方休。我将不断电，不下线，不停算。我将不发论文，不报项目。我将尽忠职守，维持稳定。我是运动力学中的李雅普诺夫，信号中的卡尔曼，抵御强烈的扰动，跟随时域的曲线，唤醒执行器的运动，守护系统的性能。我将生命与荣耀献给控制系统，本拍如此，拍拍皆然 
- */
 #include <cstdio>
 #include <cstring>
 #include <cstdlib>
@@ -95,6 +86,8 @@ void TopologicalSorting()
 
 int main()
 {
+    int t;
+    scanf("%d", &t);
     while (~scanf("%d%d", &n, &m))
     {
         memset(dfn, -1, sizeof(dfn));
@@ -115,10 +108,19 @@ int main()
         }
         for (int i = 1; i <= m; i++)
         {
-            scanf("%d%d", &u, &v);
-            u--, v--;
-            addedge(u, v ^ 1);
-            addedge(v, u ^ 1);
+            char a[5], b[5];
+            scanf("%s%s", a, b);
+            int x = 0;
+            for (int j = 1; a[j] != '\0'; j++)
+                x = x * 10 + a[j] - '0';
+            int y = 0;
+            for (int j = 1; b[j] != '\0'; j++)
+                y = y * 10 + b[j] - '0';
+            x--, y--;
+            x = x * 2, y = y * 2;
+            int fx = x + (a[0] == 'h'), fy = y + (b[0] == 'h');
+            addedge(fx ^ 1, fy);
+            addedge(fy ^ 1, fx);
         }
         //缩点
         bool flag = false;
@@ -132,8 +134,7 @@ int main()
         {
             if (scc[i] == scc[i + 1])
             {
-                printf("NIE\n");
-
+                printf("BAD\n");
                 flag = true;
                 break;
             }
@@ -145,31 +146,7 @@ int main()
         }
         if (flag)
             continue;
-        //缩点连边
-        for (int i = 0; i < 2 * n; i++)
-        {
-            for (int j = 0; j < vec[i].size(); j++)
-            {
-                if (scc[i] != scc[vec[i][j]])
-                {
-                    addedge2DAG(scc[i], scc[vec[i][j]]);
-                }
-            }
-        }
-        //拓扑排序
-        TopologicalSorting();
-
-        for (int i = 0; i < 2 * n; i += 2)
-        {
-            if (color[scc[i]] == 1)
-            {
-                printf("%d\n", i + 1);
-            }
-            else
-            {
-                printf("%d\n", i + 2);
-            }
-        }
+        printf("GOOD\n");
     }
     system("pause");
     return 0;
