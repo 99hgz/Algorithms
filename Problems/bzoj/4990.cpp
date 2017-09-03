@@ -53,7 +53,8 @@ int main()
             setnum(list[j], getmax(list[j] - 1) + 1);
         }
     }
-    printf("%d\n", getmax(n));
+
+        printf("%d\n", getmax(n));
     system("pause");
     return 0;
 }
