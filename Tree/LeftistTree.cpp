@@ -30,7 +30,7 @@ int merge(int A, int B)
     int tmp;
     tree[A].right = tmp = merge(tree[A].right, B);
     tree[tmp].fa = A;
-    if (dist[tree[A].right] < dist[tree[A].left])
+    if (dist[tree[A].right] > dist[tree[A].left])
         swap(tree[A].right, tree[A].left);
     dist[A] = dist[tree[A].right] + 1;
     return A;

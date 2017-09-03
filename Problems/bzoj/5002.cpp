@@ -7,7 +7,7 @@ using namespace std;
 typedef long long ll;
 
 int n, m, S, tot, Next[110000], head[1100], tree[110000], val[110000],
-    dis[1100], a[1100], last[1100], flag[1100], x[500000], s, t, u, v, w, cxtime[1100][2], r[1100], rc[1100];
+    dis[1100], a[1100], last[1100], flag[1100], x[500010], s, t, u, v, w, cxtime[1100][2], r[1100], rc[1100];
 bool visit[1100];
 bool reg = false, regg = false;
 void getnextcolor(int x, int nowtime, int &thiscolor, int &changetime)
@@ -34,8 +34,10 @@ void getnextcolor(int x, int nowtime, int &thiscolor, int &changetime)
     }
 }
 
-int calcwaittime(int u, int v, int nowtime, int firstdg)
+int calcwaittime(int u, int v, int nowtime, int firstdg, int deep)
 {
+    if (deep > 4)
+        return 1 << 30;
     int thiscoloru, thiscolorv, changetimeu, changetimev;
     getnextcolor(u, nowtime, thiscoloru, changetimeu);
     getnextcolor(v, nowtime, thiscolorv, changetimev);
@@ -44,7 +46,7 @@ int calcwaittime(int u, int v, int nowtime, int firstdg)
     if (changetimeu == changetimev)
     {
         if (firstdg == 0 || nowtime <= r[u] || nowtime <= r[v])
-            return calcwaittime(u, v, changetimeu, 1);
+            return calcwaittime(u, v, changetimeu, 1, deep + 1);
         else
             return 1 << 30;
     }
@@ -71,12 +73,14 @@ int spfa(int s)
     while (t < w)
     {
         t++;
+        if (t == 500000)
+            t = 1;
         int u = x[t];
         visit[u] = false;
         for (int i = head[u]; i; i = Next[i])
         {
             int v = tree[i];
-            int tmp = calcwaittime(u, v, dis[u], 0);
+            int tmp = calcwaittime(u, v, dis[u], 0, 0);
 
             if (tmp + val[i] < dis[v])
             {
@@ -84,13 +88,16 @@ int spfa(int s)
                 dis[v] = tmp + val[i];
                 if (!visit[v])
                 {
-                    x[++w] = v, visit[v] = true;
+                    w++;
+                    if (w == 500000)
+                        w = 1;
+                    x[w] = v, visit[v] = true;
                 }
             }
         }
     }
 }
-
+stack<int> SS;
 int main()
 {
     scanf("%d%d", &s, &t);
@@ -115,21 +122,19 @@ int main()
     }
     else
     {
-
-        int SS[1010];
-        int len = 0;
+        SS.push(t);
         int it = last[t];
-        SS[++len] = t;
         while (it != 0)
         {
-            SS[++len] = it;
+            SS.push(it);
             it = last[it];
         }
         printf("%d\n", dis[t]);
         //SS.push(s);
-        for (; len >= 1; len--)
+        while (!SS.empty())
         {
-            int tmp = SS[len];
+            int tmp = SS.top();
+            SS.pop();
             if (tmp == t)
                 break;
             printf("%d ", tmp);
