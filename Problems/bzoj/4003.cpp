@@ -21,6 +21,7 @@ ll push_down(ll x)
         tree[rt].val *= tree[x].times;
         tree[rt].val += tree[x].add;
         tree[rt].times *= tree[x].times;
+        tree[rt].add *= tree[x].times;
         tree[rt].add += tree[x].add;
         tree[rt].suc += tree[x].suc;
         success[rt] += tree[x].suc;
@@ -31,6 +32,7 @@ ll push_down(ll x)
         tree[rt].val *= tree[x].times;
         tree[rt].val += tree[x].add;
         tree[rt].times *= tree[x].times;
+        tree[rt].add *= tree[x].times;
         tree[rt].add += tree[x].add;
         tree[rt].suc += tree[x].suc;
         success[rt] += tree[x].suc;
@@ -48,6 +50,7 @@ ll merge(ll A, ll B)
         swap(A, B);
     ll tmp;
     push_down(A);
+    push_down(B);
     tree[A].right = tmp = merge(tree[A].right, B);
     tree[tmp].fa = A;
     if (dist[tree[A].right] > dist[tree[A].left])
@@ -63,10 +66,8 @@ ll get_father(ll A)
 
 ll erase(ll A)
 {
-
     tree[tree[A].left].fa = 0;
     tree[tree[A].right].fa = 0;
-    tree[A].val = 0;
     push_down(A);
     return merge(tree[A].left, tree[A].right);
 }
@@ -97,6 +98,7 @@ void dfs(ll x)
     if (a[x])
     {
         tree[root[x]].times *= v[x];
+        tree[root[x]].add *= v[x];
         tree[root[x]].val *= v[x];
     }
     else
@@ -106,6 +108,14 @@ void dfs(ll x)
     }
     tree[root[x]].suc++;
     success[root[x]]++;
+}
+
+void dfs2(int x)
+{
+    if (x==0)return ;
+    push_down(x);
+    dfs2(tree[x].left);
+    dfs2(tree[x].right);
 }
 
 int main()
@@ -133,6 +143,10 @@ int main()
     {
         printf("%lld\n", killed[i]);
     }
+    /*while (root[1])
+    {root[1] = erase(root[1]);
+    }*/
+    dfs2(root[1]);
     for (ll i = 1; i <= m; i++)
     {
         printf("%lld\n", success[i]);
