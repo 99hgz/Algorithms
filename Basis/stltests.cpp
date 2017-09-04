@@ -5,11 +5,13 @@
 
 using namespace std;
 
-int main() {
+int main()
+{
   vector<int> Numbers;
   vector<int>::iterator start, end, it, location;
   Numbers.push_back(10);
   Numbers.push_back(4);
+  Numbers.push_back(11);
   Numbers.push_back(11);
   Numbers.push_back(30);
   Numbers.push_back(69);
@@ -22,8 +24,9 @@ int main() {
   cout << "Numbers { ";
   for (it = start; it != end; it++)
     cout << *it << " ";
-  cout << " }\n" << endl;
-  location = lower_bound(start, end, 11);
+  cout << " }\n"
+       << endl;
+  location = upper_bound(start, end, 11);
   cout << location - start << endl;
   system("pause");
 }

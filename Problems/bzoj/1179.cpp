@@ -75,7 +75,7 @@ void spfa(int s)
     queue<int> Q1;
     Q1.push(s);
     inq[s] = true;
-    dis[s] = size[bh[s]];
+    dis[s] = size[s];
     while (!Q1.empty())
     {
         int tmp = Q1.front();
@@ -119,25 +119,22 @@ int main()
     while (!pointstack.empty())
         pointstack.pop();
 
-    for (int i = 1; i <= n; i++)
-    {
-        if (dfn[i] == 0)
-        {
-            tarjan(i, i);
-        }
-    }
+    tarjan(s, s);
 
     int u, v;
     for (int i = 0; i < edges.size(); i++)
     {
         u = edges[i].l;
         v = edges[i].r;
+        if (!bh[u] || !bh[v])
+            continue;
         if (bh[u] != bh[v])
         {
             newvec[bh[u]].push_back((Node){bh[v], size[bh[v]]});
         }
     }
     int ans = 0;
+    spfa(bh[s]);
     for (int i = 1; i <= ts; i++)
     {
         scanf("%d", &a);

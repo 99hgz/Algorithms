@@ -1,33 +1,78 @@
 /*
- * @keyword:左偏树
- * @已测试:https://www.luogu.org/problem/show?pid=3377
+ * @左偏树
+ * @BZOJ-2333
  * @Author: hgz 
- * @Date: 2017-09-01 21:17:19 
- * @Last Modified by: hgz
- * @Last Modified time: 2017-09-01 21:18:25
+ * @Date: 2017-09-04 19:13:47 
+ * @Last Modified by:   hgz 
+ * @Last Modified time: 2017-09-04 19:13:47 
  * 参考输入将至，我将开始控制，至死方休。我将不断电，不下线，不停算。我将不发论文，不报项目。我将尽忠职守，维持稳定。我是运动力学中的李雅普诺夫，信号中的卡尔曼，抵御强烈的扰动，跟随时域的曲线，唤醒执行器的运动，守护系统的性能。我将生命与荣耀献给控制系统，本拍如此，拍拍皆然 
  */
 #include <cstdio>
 #include <cstring>
+#include <queue>
+#include <stack>
+#include <vector>
+#include <set>
 #include <cstdlib>
 #include <algorithm>
 using namespace std;
 typedef long long ll;
-
+vector<ll> vec[300010];
 struct Node
 {
-    int val, fa, left, right;
-} tree[100010];
-int dist[100010];
-int n, m, a[100010], cases, x, y;
+    ll val, fa, left, right, add;
+} tree[300010];
+ll dist[300010];
+ll n, m, a[300010], x, y, ans;
+ll cnt, totaladd, q;
+char A[10];
+#define GT greater<ll>
+multiset<ll> MS;
 
-int merge(int A, int B)
+void nownode(ll x, ll y)
+{
+    tree[x].val = y;
+    tree[x].fa = tree[x].left = tree[x].right = tree[x].add = 0;
+}
+
+ll push_down(ll x)
+{
+    if (tree[x].right)
+    {
+        ll rt = tree[x].right;
+        //tree[rt].val *= tree[x].times;
+        tree[rt].val += tree[x].add;
+        //tree[rt].times *= tree[x].times;
+        //tree[rt].add *= tree[x].times;
+        tree[rt].add += tree[x].add;
+        //tree[rt].suc += tree[x].suc;
+        //success[rt] += tree[x].suc;
+    }
+    if (tree[x].left)
+    {
+        ll rt = tree[x].left;
+        //tree[rt].val *= tree[x].times;
+        tree[rt].val += tree[x].add;
+        //tree[rt].times *= tree[x].times;
+        //tree[rt].add *= tree[x].times;
+        tree[rt].add += tree[x].add;
+        //tree[rt].suc += tree[x].suc;
+        //success[rt] += tree[x].suc;
+    }
+    //tree[x].times = 1;
+    tree[x].add = 0;
+    //tree[x].suc = 0;
+}
+
+ll merge(ll A, ll B)
 {
     if (!A || !B)
         return A + B;
-    if ((tree[A].val > tree[B].val) || (tree[A].val == tree[B].val && A > B))
+    push_down(A);
+    push_down(B);
+    if ((tree[A].val < tree[B].val))
         swap(A, B);
-    int tmp;
+    ll tmp;
     tree[A].right = tmp = merge(tree[A].right, B);
     tree[tmp].fa = A;
     if (dist[tree[A].right] > dist[tree[A].left])
@@ -36,55 +81,182 @@ int merge(int A, int B)
     return A;
 }
 
-int get_father(int A)
+ll get_father(ll A)
 {
+    //printf("%lld\n", A);
     return tree[A].fa ? get_father(tree[A].fa) : A;
 }
 
-int erase(int A)
+ll erase(ll A)
 {
-    tree[tree[A].left].fa = 0;
-    tree[tree[A].right].fa = 0;
-    merge(tree[A].left, tree[A].right);
-    tree[A].val = -1;
+    push_down(A);
+    ll fa = tree[A].fa, tmp = merge(tree[A].left, tree[A].right);
+    if (fa && tree[fa].left == A)
+        tree[fa].left = tmp;
+    if (fa && tree[fa].right == A)
+        tree[fa].right = tmp;
+    tree[tmp].fa = fa;
+    while (fa)
+    {
+        if (dist[tree[fa].right] > dist[tree[fa].left])
+            swap(tree[fa].right, tree[fa].left);
+        if ((tree[fa].right && dist[fa] == dist[tree[fa].right] + 1) || (!tree[fa].right && !dist[fa]))
+            break;
+        if (!tree[fa].right)
+            dist[fa] = 0;
+        else
+            dist[fa] = dist[tree[fa].right] + 1;
+        fa = tree[fa].fa;
+    }
+    return get_father(tmp);
+}
+
+void addedge(ll u, ll v)
+{
+    vec[u].push_back(v);
+}
+void push_down_all(ll x)
+{
+    if (x == 0)
+        return;
+    push_down(x);
+    push_down_all(tree[x].left);
+    push_down_all(tree[x].right);
+}
+void push_down_deep(ll x)
+{
+    ll fa = x;
+    stack<ll> Q;
+    while (fa)
+    {
+        Q.push(fa);
+        fa = tree[fa].fa;
+    }
+    while (!Q.empty())
+    {
+        ll tmp = Q.top();
+        push_down(tmp);
+        Q.pop();
+    }
+}
+
+void MS_erase(ll x)
+{
+    /*printf("delete:%lld\n", x);
+    multiset<ll>::iterator ii, iend;
+    iend = MS.end();
+    for (ii = MS.begin(); ii != iend; ++ii)
+        printf("%lld ", *ii);
+    printf("\n");*/
+    MS.erase(MS.find(x));
+    /*iend = MS.end();
+    for (ii = MS.begin(); ii != iend; ++ii)
+        printf("%lld ", *ii);
+    printf("\n");*/
+}
+
+void MS_insert(ll x)
+{
+    /*printf("insert:%lld\n", x);
+    multiset<ll>::iterator ii, iend;
+    iend = MS.end();
+    for (ii = MS.begin(); ii != iend; ++ii)
+        printf("%lld ", *ii);
+    printf("\n");*/
+    MS.insert(x);
+    /*iend = MS.end();
+    for (ii = MS.begin(); ii != iend; ++ii)
+        printf("%lld ", *ii);
+    printf("\n");*/
 }
 
 int main()
 {
-    scanf("%d%d", &n, &m);
-    for (int i = 1; i <= n; i++)
+    scanf("%lld", &n);
+    for (ll i = 1; i <= n; i++)
     {
-        scanf("%d", &tree[i].val);
+        scanf("%lld", &tree[i].val);
+        MS_insert(tree[i].val);
     }
-    for (int i = 1; i <= m; i++)
+    scanf("%lld", &q);
+    for (ll i = 1; i <= q; i++)
     {
-        scanf("%d", &cases);
-        if (cases == 1)
+        scanf("%s", A);
+        if (A[0] == 'U')
         {
-            scanf("%d%d", &x, &y);
-            if (tree[x].val != -1 && tree[y].val != -1)
+            scanf("%lld%lld", &x, &y);
+            ll fx = get_father(x);
+            ll fy = get_father(y);
+            if (fx != fy)
             {
-                int fax = get_father(x);
-                int fay = get_father(y);
-                if (fax != fay)
-                {
-                    merge(fax, fay);
-                }
+                MS_erase(min(tree[fx].val, tree[fy].val));
+                merge(fx, fy);
             }
         }
-        else
+        else if (A[0] == 'A' && A[1] == '1')
         {
-            scanf("%d", &x);
-            int fax = get_father(x);
-            if (tree[fax].val == -1)
-                printf("-1\n");
-            else
-            {
-                printf("%d\n", tree[fax].val);
-                erase(fax);
-            }
+            scanf("%lld%lld", &x, &y);
+            push_down_deep(x);
+            ll fx = get_father(x);
+            ll tmp = tree[fx].val, tmp2 = tree[x].val;
+            MS_erase(tree[fx].val);
+            fx = erase(x);
+            nownode(x, tmp2 + y);
+            //fx = get_father(fx);
+            merge(fx, x);
+            fx = get_father(x);
+            MS_insert(tree[fx].val);
         }
+        else if (A[0] == 'A' && A[1] == '2')
+        {
+            scanf("%lld%lld", &x, &y);
+            /*if (x == 80 && y == -40)
+            {
+                multiset<ll>::iterator ii, iend;
+                iend = MS.end();
+                for (ii = MS.begin(); ii != iend; ++ii)
+                    printf("%lld ", *ii);
+                printf("\n");
+            }*/
+            ll fx = get_father(x);
+            //printf("father:%lld\n", fx);
+            MS_erase(tree[fx].val);
+            tree[fx].add += y;
+            tree[fx].val += y;
+            MS_insert(tree[fx].val);
+        }
+        else if (A[0] == 'A' && A[1] == '3')
+        {
+            scanf("%lld", &x);
+            totaladd += x;
+        }
+        else if (A[0] == 'F' && A[1] == '1')
+        {
+            scanf("%lld", &x);
+            //printf("%lld\n", tree[x].fa);
+            push_down_deep(x);
+
+            printf("%lld\n", tree[x].val + totaladd);
+        }
+        else if (A[0] == 'F' && A[1] == '2')
+        {
+            scanf("%lld", &x);
+            ll fx = get_father(x);
+            push_down_deep(x);
+            printf("%lld\n", tree[fx].val + totaladd);
+        }
+        else if (A[0] == 'F' && A[1] == '3')
+        {
+            push_down_deep(x);
+            printf("%lld\n", *--MS.find((ll)0x7f7f7f7f) + totaladd);
+        }
+        /*multiset<ll>::iterator ii, iend;
+        iend = MS.end();
+        for (ii = MS.begin(); ii != iend; ++ii)
+            printf("%lld ", *ii);
+        printf("\n");*/
     }
-    system("pause");
+
+    //system("pause");
     return 0;
 }

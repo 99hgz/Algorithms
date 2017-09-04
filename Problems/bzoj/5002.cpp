@@ -6,11 +6,11 @@
 using namespace std;
 typedef long long ll;
 
-int n, m, S, tot, Next[110000], head[1100], tree[110000], val[110000],
+ll n, m, S, tot, Next[110000], head[1100], tree[110000], val[110000],
     dis[1100], a[1100], last[1100], flag[1100], x[500010], s, t, u, v, w, cxtime[1100][2], r[1100], rc[1100];
 bool visit[1100];
 bool reg = false, regg = false;
-void getnextcolor(int x, int nowtime, int &thiscolor, int &changetime)
+void getnextcolor(ll x, ll nowtime, ll &thiscolor, ll &changetime)
 {
     if (nowtime < r[x])
     {
@@ -18,8 +18,8 @@ void getnextcolor(int x, int nowtime, int &thiscolor, int &changetime)
         changetime = r[x];
         return;
     }
-    int thisturnusedtime = (nowtime - r[x]) % (cxtime[u][0] + cxtime[u][1]);
-    int resttime = nowtime - thisturnusedtime;
+    ll thisturnusedtime = (nowtime - r[x]) % (cxtime[u][0] + cxtime[u][1]);
+    ll resttime = nowtime - thisturnusedtime;
     thiscolor = rc[x];
     if (thisturnusedtime < cxtime[x][thiscolor ^ 1])
     {
@@ -34,11 +34,11 @@ void getnextcolor(int x, int nowtime, int &thiscolor, int &changetime)
     }
 }
 
-int calcwaittime(int u, int v, int nowtime, int firstdg, int deep)
+ll calcwaittime(ll u, ll v, ll nowtime, ll firstdg, ll deep)
 {
     if (deep > 4)
         return 1 << 30;
-    int thiscoloru, thiscolorv, changetimeu, changetimev;
+    ll thiscoloru, thiscolorv, changetimeu, changetimev;
     getnextcolor(u, nowtime, thiscoloru, changetimeu);
     getnextcolor(v, nowtime, thiscolorv, changetimev);
     if (thiscoloru == thiscolorv)
@@ -53,7 +53,7 @@ int calcwaittime(int u, int v, int nowtime, int firstdg, int deep)
     return min(changetimeu, changetimev);
 }
 
-void add(int x, int y, int z)
+void add(ll x, ll y, ll z)
 {
     tot++;
     Next[tot] = head[x];
@@ -61,11 +61,11 @@ void add(int x, int y, int z)
     tree[tot] = y;
     val[tot] = z;
 }
-int spfa(int s)
+ll spfa(ll s)
 {
-    for (int i = 1; i <= n; i++)
+    for (ll i = 1; i <= n; i++)
         dis[i] = 1 << 30, visit[i] = false, flag[i] = 0;
-    int t = 0, w = 1;
+    ll t = 0, w = 1;
     x[1] = s;
     dis[s] = 0;
     visit[s] = true;
@@ -75,13 +75,16 @@ int spfa(int s)
         t++;
         if (t == 500000)
             t = 1;
-        int u = x[t];
+        ll u = x[t];
         visit[u] = false;
-        for (int i = head[u]; i; i = Next[i])
+        for (ll i = head[u]; i; i = Next[i])
         {
-            int v = tree[i];
-            int tmp = calcwaittime(u, v, dis[u], 0, 0);
-
+            ll v = tree[i];
+            ll tmp = calcwaittime(u, v, dis[u], 0, 0);
+            if (tmp >= (1 << 30))
+                continue;
+            if (tmp < dis[u])
+                continue;
             if (tmp + val[i] < dis[v])
             {
                 last[v] = u;
@@ -97,20 +100,26 @@ int spfa(int s)
         }
     }
 }
-stack<int> SS;
+//stack<ll> SS;
+ll SS[1010], top;
 int main()
 {
-    scanf("%d%d", &s, &t);
-    scanf("%d%d", &n, &m);
-    for (int i = 1; i <= n; i++)
+    scanf("%lld%lld", &s, &t);
+    if (s == t)
+    {
+        printf("0\n");
+        return 0;
+    }
+    scanf("%lld%lld", &n, &m);
+    for (ll i = 1; i <= n; i++)
     {
         char A[10];
-        scanf("%s%d%d%d", A, &r[i], &cxtime[i][0], &cxtime[i][1]);
+        scanf("%s%lld%lld%lld", A, &r[i], &cxtime[i][0], &cxtime[i][1]);
         rc[i] = A[0] == 'B' ? 0 : 1;
     }
-    for (int i = 1; i <= m; i++)
+    for (ll i = 1; i <= m; i++)
     {
-        scanf("%d%d%d", &u, &v, &w);
+        scanf("%lld%lld%lld", &u, &v, &w);
         add(u, v, w);
         add(v, u, w);
     }
@@ -122,24 +131,25 @@ int main()
     }
     else
     {
-        SS.push(t);
-        int it = last[t];
+        SS[++top] = t;
+        //SS.push(t);
+        ll it = last[t];
         while (it != 0)
         {
-            SS.push(it);
+            SS[++top] = it;
+            //SS.push(it);
             it = last[it];
         }
-        printf("%d\n", dis[t]);
+        printf("%lld\n", dis[t]);
         //SS.push(s);
-        while (!SS.empty())
+        /* for (;; top--)
         {
-            int tmp = SS.top();
-            SS.pop();
+            ll tmp = SS[top];
             if (tmp == t)
                 break;
-            printf("%d ", tmp);
+            printf("%lld ", tmp);
         }
-        printf("%d\n", t);
+        printf("%lld\n", t);*/
 
         //while()
     }

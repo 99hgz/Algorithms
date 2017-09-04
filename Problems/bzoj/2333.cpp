@@ -59,11 +59,11 @@ ll merge(ll A, ll B)
 {
     if (!A || !B)
         return A + B;
-    if ((tree[A].val < tree[B].val) || (tree[A].val == tree[B].val && A > B))
-        swap(A, B);
-    ll tmp;
     push_down(A);
     push_down(B);
+    if ((tree[A].val < tree[B].val))
+        swap(A, B);
+    ll tmp;
     tree[A].right = tmp = merge(tree[A].right, B);
     tree[tmp].fa = A;
     if (dist[tree[A].right] > dist[tree[A].left])
@@ -178,29 +178,37 @@ int main()
             scanf("%lld%lld", &x, &y);
             ll fx = get_father(x);
             ll fy = get_father(y);
-            MS_erase(min(tree[fx].val, tree[fy].val));
             if (fx != fy)
             {
+                MS_erase(min(tree[fx].val, tree[fy].val));
                 merge(fx, fy);
             }
         }
         else if (A[0] == 'A' && A[1] == '1')
         {
             scanf("%lld%lld", &x, &y);
+            push_down_deep(x);
             ll fx = get_father(x);
-            ll tmp = tree[fx].val;
+            ll tmp = tree[fx].val, tmp2 = tree[x].val;
             MS_erase(tree[fx].val);
-            erase(x);
-            nownode(x, tmp + y);
-            fx = get_father(fx);
-            if (fx != x)
-                merge(fx, x);
+            fx = erase(x);
+            nownode(x, tmp2 + y);
+            //fx = get_father(fx);
+            merge(fx, x);
             fx = get_father(x);
             MS_insert(tree[fx].val);
         }
         else if (A[0] == 'A' && A[1] == '2')
         {
             scanf("%lld%lld", &x, &y);
+            /*if (x == 80 && y == -40)
+            {
+                multiset<ll>::iterator ii, iend;
+                iend = MS.end();
+                for (ii = MS.begin(); ii != iend; ++ii)
+                    printf("%lld ", *ii);
+                printf("\n");
+            }*/
             ll fx = get_father(x);
             //printf("father:%lld\n", fx);
             MS_erase(tree[fx].val);
@@ -225,6 +233,7 @@ int main()
         {
             scanf("%lld", &x);
             ll fx = get_father(x);
+            push_down_deep(x);
             printf("%lld\n", tree[fx].val + totaladd);
         }
         else if (A[0] == 'F' && A[1] == '3')
@@ -239,6 +248,6 @@ int main()
         printf("\n");*/
     }
 
-    system("pause");
+    //system("pause");
     return 0;
 }
