@@ -6,7 +6,7 @@ using namespace std;
 typedef long long ll;
 #define maxn 1000005
 int pos[maxn], tot, Next[maxn], Head[maxn], size[maxn], a[maxn], n, x, y, cases, m, ans, cg[maxn];
-
+int f[maxn];
 void insert(int x, int p)
 {
     tot++;
@@ -27,14 +27,15 @@ void merge(int x, int y, int changetime)
 {
     if (x == y)
         return;
-    int toc = y;
     bool swaphead = false;
-    if (size[x] > size[y])
+    if (size[f[x]] > size[f[y]])
     {
-        swap(x, y);
+        swap(f[x], f[y]);
         swaphead = true;
     }
-    printf("change%d to %d\n", x, y);
+    x = f[x];
+    y = f[y];
+    //printf("change%d to %d\n", x, y);
     int thisNext;
     for (int i = Head[x]; i; i = thisNext)
     {
@@ -43,11 +44,11 @@ void merge(int x, int y, int changetime)
         if (y == a[pos[i] + 1] && cg[pos[i] + 1] < changetime)
             ans--;
         thisNext = Next[i];
-        a[pos[i]] = swaphead ? x : y;
+        a[pos[i]] = y;
         cg[pos[i]] = changetime;
         insertnode(y, i);
     }
-    if (swaphead)
+    /*if (swaphead)
     {
         Head[x] = Head[y];
         size[x] = size[y];
@@ -58,7 +59,9 @@ void merge(int x, int y, int changetime)
     {
         size[x] = 0;
         Head[x] = 0;
-    }
+    }*/
+    size[x] = 0;
+    Head[x] = 0;
 }
 
 int main()
@@ -68,6 +71,7 @@ int main()
     {
         scanf("%d", &a[i]);
         insert(a[i], i);
+        f[a[i]] = a[i];
         if (a[i] != a[i - 1])
             ans++;
     }
@@ -83,11 +87,11 @@ int main()
             scanf("%d%d", &x, &y);
             merge(x, y, i);
         }
-        for (int j = 1; j <= n; j++)
+        /*for (int j = 1; j <= n; j++)
         {
             printf("%d ", a[j]);
         }
-        printf("\n");
+        printf("\n");*/
     }
     system("pause");
     return 0;
