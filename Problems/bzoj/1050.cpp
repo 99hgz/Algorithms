@@ -1,75 +1,77 @@
-#include <iostream>
 #include <cstdio>
+#include <cstring>
+#include <cstdlib>
 #include <algorithm>
+#include <vector>
 using namespace std;
-int n, m, S, T, ansx, ansy, f[505];
-struct node
+typedef long long ll;
+int father[510];
+int n, m, x, y, v, s, t, ansi, ansi1;
+struct PATH {
+  int x, y, v;
+};
+vector<PATH> path;
+
+inline int gcd(int a, int b) // a>b
 {
-    int u, v, val;
-} a[5005];
-double ans;
-bool cmp(node a, node b) { return a.val < b.val; }
-int gcd(int x, int y)
-{
-    if (y == 0)
-        return x;
-    else
-        return gcd(y, x % y);
+  if (b == 0)
+    return a;
+  return gcd(b, a % b);
 }
-int get(int x)
-{
-    if (f[x] == x)
-        return x;
-    else
-        f[x] = get(f[x]);
-    return f[x];
+int cmp(PATH a, PATH b) { return a.v < b.v; }
+int get_father(int x) {
+  return father[x] == -1 ? x : father[x] = get_father(father[x]);
 }
-bool calc()
-{
-    int x1 = get(S), y1 = get(T);
-    if (x1 == y1)
-        return true;
-    return false;
+int unionset(int a, int b) {
+  int fa = get_father(a), fb = get_father(b);
+  if (fa == fb)
+    return 1;
+  else
+    father[fa] = fb;
+  return 0;
 }
-int main()
-{
-    scanf("%d%d", &n, &m);
-    for (int i = 1; i <= m; i++)
-        scanf("%d%d%d", &a[i].u, &a[i].v, &a[i].val);
-    scanf("%d%d", &S, &T);
-    sort(a + 1, a + m + 1, cmp);
-    ans = 1 << 29;
-    for (int i = 1; i <= m; i++)
-        if (a[i].val == a[i - 1].val)
-        {
-            for (int j = 1; j <= n; j++)
-                f[j] = j;
-            for (int j = i; j <= m; j++)
-            {
-                int x1 = get(a[j].u), y1 = get(a[j].v);
-                if (x1 != y1)
-                    f[x1] = y1;
-                if (calc())
-                {
-                    if ((double)a[j].val / (double)a[i].val < ans)
-                    {
-                        ansx = a[j].val;
-                        ansy = a[i].val;
-                        ans = (double)a[j].val / (double)a[i].val;
-                    }
-                    break;
-                }
-            }
-        }
-    int z = gcd(ansx, ansy);
-    if (ansy == z)
-    {
-        printf("%d\n", ansx / z);
-        return 0;
-    }
-    if (ans != 1 << 29)
-        printf("%d/%d\n", ansx / z, ansy / z);
-    else
-        printf("IMPOSSIBLE\n");
+int main() {
+  memset(father, -1, sizeof father);
+  scanf("%d%d", &n, &m);
+  for (int i = 1; i <= m; i++) {
+    scanf("%d%d%d", &x, &y, &v);
+    path.push_back((PATH){x, y, v});
+    unionset(x, y);
+  }
+  bool noans = true;
+  scanf("%d%d", &s, &t);
+  if (unionset(s, t) == 0) {
+    printf("IMPOSSIBLE\n");
+    // system("pause");
     return 0;
+  } else {
+    sort(path.begin(), path.end(), cmp);
+    for (int i1 = 0; i1 < path.size(); i1++) {
+      memset(father, -1, sizeof father);
+      bool flag = false;
+      int last = 0;
+      for (int i = i1; i < path.size(); i++) {
+        unionset(path[i].x, path[i].y);
+        if (get_father(s) == get_father(t)) {
+          flag = true;
+          last = i;
+          break;
+        }
+      }
+      if (flag) {
+        if ((noans) ||
+            (path[last].v * path[ansi1].v < path[i1].v * path[ansi].v)) {
+          ansi1 = i1, ansi = last, noans = false;
+        }
+      }
+    }
+  }
+  int zdg = gcd(path[ansi1].v, path[ansi].v);
+  // printf("%d %d\n", ansi1, path[ansi].v);
+  if (path[ansi1].v != zdg)
+    printf("%d/%d\n", path[ansi].v / zdg, path[ansi1].v / zdg);
+  else
+    printf("%d\n", path[ansi].v / path[ansi1].v);
+  // system("pause");
+  return 0;
 }
