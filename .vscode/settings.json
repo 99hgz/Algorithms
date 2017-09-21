@@ -57,7 +57,8 @@
         "typeindex": "cpp",
         "climits": "cpp",
         "hash_map": "cpp",
-        "random": "cpp"
+        "random": "cpp",
+        "rope": "cpp"
     },
     "python.linting.pylintEnabled": false,
     "python.formatting.provider": "yapf"
