@@ -4,9 +4,15 @@
 #include <algorithm>
 using namespace std;
 typedef long long ll;
+<<<<<<< HEAD
 
 ll f[100], k, bit[100], n, ans, last[100], bin[100];
 
+=======
+ 
+ll f[100], k, bit[100], n, ans, last[100], bin[100];
+ 
+>>>>>>> a6080f55d13e81ea816d3179dae319883222cc06
 ll dfs(ll tjnum, ll pos, bool limit) {
   // printf("%lld %lld %d\n", cd, pos, limit);
   if (pos == 0)
@@ -26,7 +32,11 @@ ll dfs(ll tjnum, ll pos, bool limit) {
     f[pos] = res;
   return res;
 }
+<<<<<<< HEAD
 
+=======
+ 
+>>>>>>> a6080f55d13e81ea816d3179dae319883222cc06
 int main() {
   scanf("%lld", &n);
   ll nn = n;
@@ -39,7 +49,11 @@ int main() {
     bin[k] = bin[k - 1] * 10;
   }
   ans = 1;
+<<<<<<< HEAD
 
+=======
+ 
+>>>>>>> a6080f55d13e81ea816d3179dae319883222cc06
   for (ll i = 0; i <= 9; i++) {
     memset(f, -1, sizeof f);
     printf("%lld\n", dfs(i, k, true));
