@@ -1,9 +1,10 @@
-int main() {
+int main()
+{
   printf("我做的真是水题\n");
   printf("我全靠%s", dalaosname);
-  printf("%%%xyf %%%hgz");
+  printf("%%%xyf %%%lzw");
   //给菜鸡们一点动力
-  send_an_image("%%%hgz.jpg");
+  send_an_image("%%%lzw.jpg");
   printf("都是水题。。。。。。。。。\n");
   printf("真的水。。\n");
   printf("不信你自己看\n");

@@ -5,9 +5,9 @@
 #include <algorithm>
 using namespace std;
 typedef long long ll;
-
-int n, a[200010], ans, l[200010], r[200010];
-
+typedef long long ll1;
+int n, a[200010], l[200010], r[200010];
+ll ans;
 class RMQ
 {
   public:
@@ -18,7 +18,7 @@ class RMQ
             DP[i][0] = i;
         for (int j = 1; j <= temp; j++)
             for (int i = 1; i <= n; i++)
-                if (i + (1 << j) - 1 <= n)
+                if (i + (1 << (j - 1)) <= n)
                     DP[i][j] = (a[DP[i][j - 1]] > a[DP[i + (1 << (j - 1))][j - 1]]) ? DP[i][j - 1] : DP[i + (1 << (j - 1))][j - 1];
     }
     int Maximun(int L, int H)
@@ -32,6 +32,42 @@ class RMQ
 };
 RMQ R;
 
+/*void check(int l, int r, int mid)
+{
+    if (a[mid] != a[R.Maximun(l, r)])
+    {
+        printf("error1\n");
+    }
+    int res = 0;
+    for (int i = l; i <= r; i++)
+    {
+        res |= a[i];
+    }
+    if (res <= a[mid])
+    {
+        printf("error2\n");
+    }
+    else
+    {
+        printf("%d %d\n", l, r);
+    }
+}*/
+
+bool check(int l, int r)
+{
+    int mid = R.Maximun(l, r);
+    int res = 0;
+    for (int i = l; i <= r; i++)
+    {
+        res |= a[i];
+    }
+    if (res > a[mid])
+    {
+        return true;
+    }
+    return false;
+}
+
 void erfen(int ll, int rr)
 {
     if (ll >= rr)
@@ -39,15 +75,14 @@ void erfen(int ll, int rr)
     int mid = R.Maximun(ll, rr);
     int rangel = max(l[mid], ll - 1), ranger = min(rr + 1, r[mid]);
     //printf("ef:%d %d %d\n", ll, rr, mid);
-    if (rangel >= ll || ranger <= rr)
-        ans += (rangel - ll + 2) * (rr - ranger + 2) - 1;
+    ans += (ll1)(rangel - ll + 1) * (ll1)(rr - mid + 1) + (ll1)(rr - ranger + 1) * (ll1)(mid - ll + 1) - (ll1)(rangel - ll + 1) * (ll1)(rr - ranger + 1);
     erfen(ll, mid - 1);
     erfen(mid + 1, rr);
 }
 
 int main()
 {
-
+    //freopen("F.out", "w", stdout);
     scanf("%d", &n);
     for (int i = 1; i <= n; i++)
     {
@@ -96,7 +131,17 @@ int main()
         printf("%d %d\n", l[i], r[i]);
     }*/
     erfen(1, n);
-    printf("%d\n", ans);
-    system("pause");
+    /*for (int i = 1; i <= n; i++)
+    {
+        for (int j = i + 1; j <= n; j++)
+        {
+            if (check(i, j))
+            {
+                printf("%d %d\n", i, j);
+            }
+        }
+    }*/
+    printf("%lld\n", ans);
+    //system("pause");
     return 0;
 }
