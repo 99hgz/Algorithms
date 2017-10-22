@@ -12,18 +12,67 @@ struct LINE
 {
     int l, r, cd;
 } line[500010];
-int Hash[500010 * 2];
-/*bool cmp(LINE a,LINE b){
-    return a.l<b.l;
-};*/
 
-struct Node
+bool cmp(LINE a, LINE b)
 {
-    int op, id;
+    return a.cd < b.cd;
 };
-vector<Node> job[500010 * 2];
-multiset<int> st;
+
 int tot;
+
+#define N 1000005
+#define lson l, m, rt << 1
+#define rson m + 1, r, rt << 1 | 1
+int mark[N * 4];
+int visit[N * 4];
+int Hash[1001010];
+void pushUp(int rt)
+{
+    mark[rt] = max(mark[rt << 1], mark[rt << 1 | 1]);
+}
+
+void pushDown(int rt, int d)
+{
+    if (visit[rt] != 0)
+    {
+        visit[rt << 1] += visit[rt];
+        visit[rt << 1 | 1] += visit[rt];
+        mark[rt << 1 | 1] += visit[rt];
+        mark[rt << 1] += visit[rt];
+        visit[rt] = 0;
+    }
+}
+void update(int L, int R, int c, int l, int r, int rt)
+{
+    if (L <= l && R >= r)
+    {
+        visit[rt] += c;
+        mark[rt] += c;
+        return;
+    }
+    pushDown(rt, r - l + 1);
+    int m = (l + r) >> 1;
+    if (L <= m)
+        update(L, R, c, lson);
+    if (R > m)
+        update(L, R, c, rson);
+    pushUp(rt);
+}
+int query(int L, int R, int l, int r, int rt)
+{
+    if (L <= l && R >= r)
+    {
+        return mark[rt];
+    }
+    pushDown(rt, r - l + 1);
+    int m = (l + r) >> 1;
+    int ret = 0;
+    if (L <= m)
+        ret = max(ret, query(L, R, lson));
+    if (R > m)
+        ret = max(ret, query(L, R, rson));
+    return ret;
+}
 
 int main()
 {
@@ -35,73 +84,30 @@ int main()
         Hash[++tot] = line[i].l;
         Hash[++tot] = line[i].r;
     }
-    //sort(line + 1, line + 1 + n, cmp);
     sort(Hash + 1, Hash + 1 + tot);
     int tn = unique(Hash + 1, Hash + 1 + tot) - Hash - 1;
+    sort(line + 1, line + 1 + n, cmp);
+    int head = 1, ans = 0x3f3f3f3f;
     for (int i = 1; i <= n; i++)
     {
         line[i].l = lower_bound(Hash + 1, Hash + 1 + tn, line[i].l) - Hash;
         line[i].r = lower_bound(Hash + 1, Hash + 1 + tn, line[i].r) - Hash;
-        job[line[i].l].push_back((Node){1, i});
-        job[line[i].r + 1].push_back((Node){2, i});
-    }
-    int ans = 0x3f3f3f3f;
-    for (int i = 1; i <= tn; i++)
-    {
-        for (int j = 0; j < job[i].size(); j++)
+        update(line[i].l, line[i].r, 1, 1, tn, 1);
+        int tmp = query(line[i].l, line[i].r, 1, tn, 1);
+        // printf("push:%d %d\n", line[i].l, line[i].r);
+        //printf("%d\n", tmp);
+        if (tmp >= m)
         {
-            if (job[i][j].op == 2)
+            while (head <= i)
             {
-                st.erase(st.find(line[job[i][j].id].cd));
+                if (query(1, tn, 1, tn, 1) < m)
+                    break;
+                //printf("pop:%d %d\n", line[head].l, line[head].r);
+                update(line[head].l, line[head].r, -1, 1, tn, 1);
+                head++;
             }
+            ans = min(ans, line[i].cd - line[head - 1].cd);
         }
-        printf("set:");
-        for (multiset<int>::iterator it = st.begin(); it != st.end(); it++)
-        {
-            printf("%d ", *it);
-        }
-        printf("\n");
-        for (int j = 0; j < job[i].size(); j++)
-        {
-            if (job[i][j].op == 1)
-            {
-                printf("-----\n");
-                st.insert(line[job[i][j].id].cd);
-                int tmp = st.count(line[job[i][j].id].cd);
-                multiset<int>::iterator it = st.lower_bound(line[job[i][j].id].cd);
-                tot = tmp;
-                while (it != st.begin() && tot < m)
-                {
-                    it--;
-                    tot++;
-                    printf("%d\n", *it);
-                }
-                if (tot == m)
-                {
-                    printf("ans:%d %d %d\n", line[job[i][j].id].cd, *it, (line[job[i][j].id].cd - (*it)));
-                    ans = min(ans, (line[job[i][j].id].cd - (*it)));
-                }
-                it = st.lower_bound(line[job[i][j].id].cd);
-                tot = 0;
-                while (it != st.end() && tot < m)
-                {
-                    printf("%d\n", *it);
-                    it++;
-                    tot++;
-                }
-                if (tot == m)
-                {
-                    printf("ans:%d %d %d\n", line[job[i][j].id].cd, *it, (-line[job[i][j].id].cd + (*it)));
-                    ans = min(ans, (-line[job[i][j].id].cd + (*it)));
-                }
-            }
-        }
-        printf("set:");
-        for (multiset<int>::iterator it = st.begin(); it != st.end(); it++)
-        {
-            printf("%d ", *it);
-        }
-        printf("\n");
     }
     printf("%d\n", ans == 0x3f3f3f3f ? -1 : ans);
     system("pause");
