@@ -1,132 +1,114 @@
 #include <iostream>
-#include <cstdio>
-#include <cstdlib>
 #include <cstring>
-#define inf 0x7fffffff
-#define T 1001
+#include <algorithm>
+#include <cstdio>
+#include <cmath>
+#define N 100003
+#define LL long long
 using namespace std;
-int head[1005], q[1005], h[1005];
-int cnt, ans, mx, mid;
-int n, k, mp[1005][1005];
-struct data
-{
-    int to, next, v;
-} e[500001];
-void ins(int u, int v, int w)
-{
-    e[++cnt].to = v;
-    e[cnt].next = head[u];
-    e[cnt].v = w;
-    head[u] = cnt;
-}
-void insert(int u, int v, int w)
-{
-    ins(u, v, w);
-    ins(v, u, 0);
-}
-bool bfs()
-{
-    int t = 0, w = 1, i, now;
-    memset(h, -1, sizeof(h));
-    q[0] = 0;
-    h[0] = 0;
-    while (t < w)
-    {
-        now = q[t];
-        t++;
-        i = head[now];
-        while (i)
-        {
-            if (e[i].v && h[e[i].to] == -1)
-            {
-                h[e[i].to] = h[now] + 1;
-                q[w++] = e[i].to;
-            }
-            i = e[i].next;
-        }
+int n, m;
+char s[N];
+struct data {
+  int a[N], p, height[N];
+  int xx[N], yy[N], *x, *y, sa[N], rank[N], st[20][N], L[N], v[N];
+  int cmp(int i, int j, int k) {
+    return y[i] == y[j] &&
+           (i + k > n ? -1 : y[i + k]) == (j + k > n ? -1 : y[j + k]);
+  }
+  void get_sa() {
+    int m = 300;
+    x = xx;
+    y = yy;
+    for (int i = 1; i <= n; i++)
+      v[x[i] = a[i]]++;
+    for (int i = 1; i <= m; i++)
+      v[i] += v[i - 1];
+    for (int i = n; i >= 1; i--)
+      sa[v[x[i]]--] = i;
+    for (int k = 1; k <= n; k <<= 1) {
+      p = 0;
+      for (int i = n - k + 1; i <= n; i++)
+        y[++p] = i;
+      for (int i = 1; i <= n; i++)
+        if (sa[i] > k)
+          y[++p] = sa[i] - k;
+      for (int i = 1; i <= m; i++)
+        v[i] = 0;
+      for (int i = 1; i <= n; i++)
+        v[x[y[i]]]++;
+      for (int i = 1; i <= m; i++)
+        v[i] += v[i - 1];
+      for (int i = n; i >= 1; i--)
+        sa[v[x[y[i]]]--] = y[i];
+      swap(x, y);
+      p = 2;
+      x[sa[1]] = 1;
+      for (int i = 2; i <= n; i++)
+        x[sa[i]] = cmp(sa[i], sa[i - 1], k) ? p - 1 : p++;
+      if (p > n)
+        break;
+      m = p + 1;
     }
-    return h[T] == -1 ? 0 : 1;
-}
-int dfs(int x, int f)
-{
-    if (x == T)
-        return f;
-    int w, used = 0, i;
-    i = head[x];
-    while (i)
-    {
-        if (e[i].v && h[e[i].to] == h[x] + 1)
-        {
-            w = f - used;
-            w = dfs(e[i].to, min(w, e[i].v));
-            e[i].v -= w;
-            e[i ^ 1].v += w;
-            used += w;
-            if (used == f)
-                return f;
-        }
-        i = e[i].next;
+    for (int i = 1; i <= n; i++)
+      rank[sa[i]] = i;
+    p = 0;
+    for (int i = 1; i <= n; i++) {
+      if (rank[i] == 1)
+        continue;
+      int j = sa[rank[i] - 1];
+      while (j + p <= n && i + p <= n && a[j + p] == a[i + p])
+        p++;
+      height[rank[i]] = p;
+      p = max(p - 1, 0);
     }
-    if (!used)
-        h[x] = -1;
-    return used;
-}
-void dinic()
-{
-    while (bfs())
-        ans += dfs(0, inf);
-}
-void ini()
-{
-    scanf("%d%d", &n, &k);
     for (int i = 1; i <= n; i++)
-    {
-        char ch[51];
-        scanf("%s", ch);
-        for (int j = 1; j <= n; j++)
-            if (ch[j - 1] == 'Y')
-                mp[i][j] = 1;
+      st[0][i] = height[i];
+    for (int j = 1; j <= 17; j++)
+      for (int i = 1; i <= n; i++)
+        if (i + (1 << j) - 1 <= n)
+          st[j][i] = min(st[j - 1][i], st[j - 1][i + (1 << j - 1)]);
+    int j = 0;
+    for (int i = 1; i <= n; i++) {
+      if ((1 << j + 1) <= i)
+        j++;
+      L[i] = j;
     }
-}
-void build()
-{
-    cnt = 1;
-    memset(head, 0, sizeof(head));
-    for (int i = 1; i <= n; i++)
-        insert(0, i, mid);
-    for (int i = 1; i <= n; i++)
-        insert(i, i + 500, k);
-    for (int i = 1; i <= n; i++)
-        insert(n + i + 500, n + i, k);
-    for (int i = 1; i <= n; i++)
-        insert(n + i, T, mid);
-    for (int i = 1; i <= n; i++)
-        for (int j = 1; j <= n; j++)
-            if (mp[i][j])
-                insert(i, n + j, 1);
-            else
-                insert(i + 500, n + j + 500, 1);
-}
-int main()
-{
-    ini();
-    int l = 0, r = 50;
-    while (l <= r)
-    {
-        mid = (l + r) >> 1;
-        build();
-        ans = 0;
-        dinic();
-        printf("%d\n", ans);
-        if (ans >= n * mid)
-        {
-            mx = mid;
-            l = mid + 1;
-        }
-        else
-            r = mid - 1;
+  }
+  int calc(int x, int y) {
+    if (x > y)
+      swap(x, y);
+    int k = L[y - x];
+    x++;
+    return min(st[k][x], st[k][y - (1 << k) + 1]);
+  }
+} lcp, lcs;
+int main() {
+  /*freopen("a.in", "r", stdin);
+  freopen("my.out", "w", stdout);*/
+  scanf("%d", &m);
+  scanf("%s", s + 1);
+  n = strlen(s + 1);
+  for (int i = 1; i <= n; i++)
+    lcp.a[i] = s[i] + 1;
+  for (int i = 1; i <= n; i++)
+    lcs.a[i] = s[n - i + 1] + 1;
+  lcp.get_sa();
+  lcs.get_sa();
+  LL ans = 0;
+  for (int i = 1; i + i + m <= n; i++) {
+    for (int l = 1; l <= n; l += i) {
+      int r = l + i + m;
+      printf("%d\n", r);
+      int t = min(i, lcp.calc(lcp.rank[l], lcp.rank[r]));
+      int t1 = min(i, lcs.calc(lcs.rank[n - l + 1], lcs.rank[n - r + 1]));
+      printf("%d %d %d %d\n", i, l, t, t1);
+      int len = t + t1;
+      if (t && t1)
+        len--;
+      if (len >= i)
+        ans += (LL)(len - i + 1);
     }
-    printf("%d", mx);
-    system("pause");
-    return 0;
+  }
+  printf("%lld\n", ans);
+  system("pause");
 }

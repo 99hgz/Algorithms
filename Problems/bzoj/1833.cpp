@@ -4,39 +4,29 @@
 #include <algorithm>
 using namespace std;
 typedef long long ll;
-<<<<<<< HEAD
 
 ll f[100], k, bit[100], n, ans, last[100], bin[100];
 
-=======
- 
-ll f[100], k, bit[100], n, ans, last[100], bin[100];
- 
->>>>>>> a6080f55d13e81ea816d3179dae319883222cc06
-ll dfs(ll tjnum, ll pos, bool limit) {
-  // printf("%lld %lld %d\n", cd, pos, limit);
+ll dfs(ll tjnum, ll pos, bool lead, bool limit) {
   if (pos == 0)
-    return 1;
-  if (!limit && f[pos] != -1)
+    return lead ? 0 : 1;
+  if (!limit && !lead && f[pos] != -1)
     return f[pos];
   ll res = 0;
   ll maxx = (limit ? bit[pos] : 9);
   for (ll i = 0; i <= maxx; i++) {
-    res += dfs(tjnum, pos - 1, limit && i == bit[pos]);
-    if (i == tjnum) {
+    res += dfs(tjnum, pos - 1, lead && i == 0, limit && i == bit[pos]);
+    if (i == tjnum && !(lead && i == 0)) {
       res += ((limit && i == bit[pos]) ? last[pos - 1] : bin[pos - 1]);
     }
     // res %= (ll)10000007;
   }
-  if (!limit)
+  printf("%lld %lld %d %d %lld\n", tjnum, pos, lead, limit, res);
+  if (!limit && !lead)
     f[pos] = res;
   return res;
 }
-<<<<<<< HEAD
 
-=======
- 
->>>>>>> a6080f55d13e81ea816d3179dae319883222cc06
 int main() {
   scanf("%lld", &n);
   ll nn = n;
@@ -49,15 +39,9 @@ int main() {
     bin[k] = bin[k - 1] * 10;
   }
   ans = 1;
-<<<<<<< HEAD
 
-=======
- 
->>>>>>> a6080f55d13e81ea816d3179dae319883222cc06
-  for (ll i = 0; i <= 9; i++) {
-    memset(f, -1, sizeof f);
-    printf("%lld\n", dfs(i, k, true));
-  }
+  printf("%lld\n", dfs(0, k, true, true));
+
   // printf("%lld\n", ans);
   system("pause");
   return 0;
