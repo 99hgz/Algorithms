@@ -11,8 +11,7 @@ const int T = 100000 + 5;
 
 int len;
 
-char s[T], s1[T];
-
+int origin[T], s[T], s1[T];
 int v[maxl], sa1[maxl], rk1[maxl], sa2[maxl], rk2[maxl], ht[maxl], Rk[maxl];
 int *sa, *rk, *SA, *RK;
 void make_sa()
@@ -24,7 +23,7 @@ void make_sa()
     int i, k, j;
     for (i = 1; i <= len; i++)
         v[s[i]]++;
-    for (i = 1; i <= 300; i++)
+    for (i = 1; i <= 50010; i++)
         v[i] += v[i - 1];
     for (i = len; i; i--)
         sa[v[s[i]]--] = i;
@@ -80,14 +79,26 @@ class RMQ
         return min(DP[bh][L][k], DP[bh][H - (1 << k) + 1][k]);
     }
 };
-
+int Hash[T];
 int main()
 {
     int L;
     ll ANS = 0;
-    scanf("%d", &L);
-    scanf("%s", s + 1);
-    len = strlen(s + 1);
+    scanf("%d%d", &len, &L);
+    for (int i = 1; i <= len; i++)
+    {
+        scanf("%d", &origin[i]);
+        if (i != 1)
+            Hash[i - 1] = s[i - 1] = origin[i] - origin[i - 1];
+    }
+    len--;
+    sort(Hash + 1, Hash + len + 1);
+    int tn = unique(Hash + 1, Hash + 1 + len) - Hash - 1;
+    for (int i = 1; i <= len; i++)
+    {
+        s[i] = lower_bound(Hash + 1, Hash + 1 + tn, s[i]) - Hash;
+        //printf("%d\n", s[i]);
+    }
     for (int i = 1; i <= len; i++)
         s1[i] = s[i];
     make_sa();
@@ -116,7 +127,7 @@ int main()
             int r = j + i + L;
             int t = min(i, R.Minimum(0, Rk[j], Rk[r]));
             int t1 = min(i, R.Minimum(1, (len - j + 1 <= 0) ? 0 : rk[len - j + 1], (len - r + 1 <= 0) ? 0 : rk[len - r + 1]));
-            printf("%d %d %d %d\n", i, j, t, t1);
+            //printf("%d %d %d %d\n", i, j, t, t1);
             int ans = t + t1;
             if (t && t1)
                 ans--;
