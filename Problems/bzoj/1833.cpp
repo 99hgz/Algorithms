@@ -37,10 +37,16 @@ ll dfs(ll tjnum, ll pos, bool limit)
   return res;
 }
 
-int main()
+ll calc(ll tjnum, ll n)
 {
-  scanf("%lld", &n);
-  ll nn = n;
+  //printf("%lld %lld\n", n, tjnum);
+  if (n == 0)
+  {
+    if (tjnum == 0)
+      return 1;
+    else
+      return 0;
+  }
   k = 0;
   bin[0] = 1;
   while (n)
@@ -49,21 +55,27 @@ int main()
     n /= (ll)10;
     bin[k] = bin[k - 1] * 10;
     last[k] = last[k - 1] + bin[k - 1] * bit[k];
-    // printf("last[%lld]=%lld\n", k, last[k]);
+    //printf("last[%lld]=%lld\n", k, last[k]);
   }
-  ans = 1;
 
+  memset(f, -1, sizeof f);
+  ll tmp = dfs(tjnum, k, true);
+  if (tjnum == 0)
+  {
+    for (int i = 0; i <= k - 1; i++)
+      tmp -= bin[i];
+    tmp++;
+  }
+  return tmp;
+}
+
+int main()
+{
+  ll l, r;
+  scanf("%lld%lld", &l, &r);
   for (ll i = 0; i <= 9; i++)
   {
-    memset(f, -1, sizeof f);
-    ll tmp = dfs(i, k, true);
-    if (i == 0)
-    {
-      for (int i = 0; i <= k - 1; i++)
-        tmp -= bin[i];
-      tmp++;
-    }
-    printf("%lld\n", tmp);
+    printf("%lld ", calc(i, r) - calc(i, l - 1));
   }
   // printf("%lld\n", ans);
   system("pause");
