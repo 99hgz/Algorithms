@@ -142,17 +142,17 @@ int main()
         }
         printf("%lld\n", dis[t]);
         //SS.push(s);
-        /* for (;; top--)
+        for (;; top--)
         {
             ll tmp = SS[top];
             if (tmp == t)
                 break;
             printf("%lld ", tmp);
         }
-        printf("%lld\n", t);*/
+        printf("%lld\n", t);
 
         //while()
     }
-    system("pause");
+
     return 0;
 }
