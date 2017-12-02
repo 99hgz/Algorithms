@@ -40,11 +40,13 @@ int main()
 {
     while (~scanf("%d%d", &n, &m))
     {
+        memset(belong, 0, sizeof belong);
+        memset(used, 0, sizeof used);
+        T = 0;
         for (int i = 1; i <= n; i++)
         {
             vec[i].clear();
-            memset(belong, 0, sizeof belong);
-            T = 0;
+
             int edges;
             scanf("%d", &edges);
             for (int j = 1; j <= edges; j++)

@@ -6,10 +6,10 @@
 using namespace std;
 typedef long long ll;
 
-int Q[110], dep[110];
+int Q[1100], dep[1100];
 
-int tot, Head[110], cur[110], Next[21000];
-ll Val[21000], To[21000];
+int tot, Head[1100], cur[1100], To[100100], Next[100100], Id[100100];
+ll Val[100100];
 int n, m, S, T, u, v;
 
 bool bfs()
@@ -75,34 +75,63 @@ ll dinic()
     return ans;
 }
 
-void addedge(int u, int v, ll flow)
+void _addedge(int u, int v, ll flow, int id)
 {
     //printf("%d->%d\n", u, v);
     tot++;
+    Id[tot] = id;
     Next[tot] = Head[u];
     Head[u] = tot;
     Val[tot] = flow;
     To[tot] = v;
     tot++;
+    Id[tot] = id;
     Next[tot] = Head[v];
     Head[v] = tot;
     Val[tot] = 0;
     To[tot] = u;
 }
 
+void addedge(int u, int v, ll lower, ll upper, int id)
+{
+    _addedge(S, v, lower, id);
+    _addedge(u, v, upper - lower, id);
+    _addedge(u, T, lower, 0);
+}
+struct EDGE
+{
+    int u, v;
+    ll lower, upper;
+} edge[100100];
+ll ans[100100];
 int main()
 {
     tot = 1;
-    scanf("%d%d", &n, &m);
+    int s, t;
+    scanf("%d%d%d%d", &n, &m, &s, &t);
     S = n + 1;
     T = n + 2;
+    ll sum = 0;
     for (int i = 1; i <= m; i++)
-        addedge(S, i, 1);
-    for (int i = m + 1; i <= n; i++)
-        addedge(i, T, 1);
-    while (~scanf("%d%d", &u, &v))
-        addedge(u, v, 1);
-    printf("%lld", dinic());
-    system("pause");
+    {
+        scanf("%d%d%lld%lld", &edge[i].u, &edge[i].v, &edge[i].lower, &edge[i].upper);
+        addedge(edge[i].u, edge[i].v, edge[i].lower, edge[i].upper, i);
+        sum += edge[i].lower;
+    }
+    _addedge(t, s, 0x3f3f3f3f, 1);
+    ll flow1 = dinic();
+    if (sum == flow1)
+    {
+        S = s;
+        T = t;
+        flow1 = 0;
+        flow1 += dinic();
+        printf("%lld\n", flow1);
+    }
+    else
+    {
+        printf("please go home to sleep\n");
+    }
+
     return 0;
 }

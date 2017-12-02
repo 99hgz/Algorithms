@@ -8,6 +8,8 @@ typedef long long ll;
 
 int n, m, used[50010], belong[50010], T, ans;
 vector<int> vec[50010];
+int Next[50010];
+bool vis[50010];
 int calc(int x, int y)
 {
     return ((x - 1) * m + y - 1);
@@ -28,6 +30,7 @@ bool find(int x)
             used[v] = T;
             if ((belong[v] == 0) || (find(belong[v])))
             {
+                Next[x] = v;
                 belong[v] = x;
                 return true;
             }
@@ -36,33 +39,45 @@ bool find(int x)
     return false;
 }
 
+void print(int x)
+{
+    if (x == 0 || vis[x])
+    {
+        printf("\n");
+        return;
+    }
+    vis[x] = true;
+    printf("%d ", x);
+    print(Next[x]);
+}
+
 int main()
 {
-    while (~scanf("%d%d", &n, &m))
+    scanf("%d%d", &n, &m);
+
+    for (int i = 1; i <= m; i++)
     {
-        for (int i = 1; i <= n; i++)
-        {
-            vec[i].clear();
-            memset(belong, 0, sizeof belong);
-            T = 0;
-            int edges;
-            scanf("%d", &edges);
-            for (int j = 1; j <= edges; j++)
-            {
-                int tmp;
-                scanf("%d", &tmp);
-                addedge(i, tmp + n);
-            }
-        }
-        ans = 0;
-        for (int i = 1; i <= n; i++)
-        {
-            T++;
-            if (find(i))
-                ans++;
-        }
-        printf("%d\n", ans);
+        int u, v;
+        scanf("%d%d", &u, &v);
+        addedge(u, v);
     }
+    for (int i = 1; i <= n; i++)
+        reverse(vec[i].begin(), vec[i].end());
+    ans = 0;
+    for (int i = 1; i <= n; i++)
+    {
+        T++;
+        if (find(i))
+            ans++;
+    }
+
+    for (int i = 1; i <= n; i++)
+    {
+        if (!vis[i])
+            print(i);
+    }
+    printf("%d\n", n - ans);
+
     system("pause");
     return 0;
 }

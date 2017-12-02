@@ -2,30 +2,30 @@
 #include <cstring>
 #include <cstdlib>
 #include <algorithm>
-
+#include <queue>
 using namespace std;
 typedef long long ll;
 
-int Q[110], dep[110];
+ll Q[10010], dep[10010];
 
-int tot, Head[110], cur[110], Next[21000];
-ll Val[21000], To[21000];
-int n, m, S, T, u, v;
-
+ll tot, Head[10010], cur[10010], Next[201000];
+ll Val[201000], To[201000];
+ll n, m, S, T, u, v;
+ll ans1;
 bool bfs()
 {
     memset(dep, -1, sizeof dep);
-    int t = 0, w = 1;
+    ll t = 0, w = 1;
     Q[w] = S;
     dep[S] = 0;
     while (t != w)
     {
         t++;
-        int u = Q[t];
+        ll u = Q[t];
         //printf("bfs:%d\n", u);
-        for (int it = Head[u]; it; it = Next[it])
+        for (ll it = Head[u]; it; it = Next[it])
         {
-            int v = To[it];
+            ll v = To[it];
             if (Val[it] > 0 && dep[v] == -1)
             {
                 dep[v] = dep[u] + 1;
@@ -37,15 +37,15 @@ bool bfs()
     return dep[T] != -1;
 }
 
-ll dfs(int x, ll flow)
+ll dfs(ll x, ll flow)
 {
     //printf("%lld\n", flow);
     if (x == T)
         return flow;
     ll used = 0;
-    for (int it = cur[x]; it; it = Next[it])
+    for (ll it = cur[x]; it; it = Next[it])
     {
-        int v = To[it];
+        ll v = To[it];
         if (dep[v] == dep[x] + 1)
         {
             ll tmp = dfs(v, min(Val[it], flow - used));
@@ -67,7 +67,7 @@ ll dinic()
     ll ans = 0;
     while (bfs())
     {
-        for (int i = 1; i <= T; i++)
+        for (ll i = 1; i <= n + 2; i++)
             cur[i] = Head[i];
         ans += dfs(S, 1LL << 60);
         //printf("%lld\n", ans);
@@ -75,7 +75,7 @@ ll dinic()
     return ans;
 }
 
-void addedge(int u, int v, ll flow)
+void addedge(ll u, ll v, ll flow)
 {
     //printf("%d->%d\n", u, v);
     tot++;
@@ -90,19 +90,62 @@ void addedge(int u, int v, ll flow)
     To[tot] = u;
 }
 
+bool vis[10010];
+
+void ana()
+{
+    queue<ll> Q;
+    Q.push(S);
+    vis[S] = true;
+    while (!Q.empty())
+    {
+        ll u = Q.front();
+        Q.pop();
+        //printf("%d\n", u);
+        for (ll it = Head[u]; it; it = Next[it])
+        {
+            ll v = To[it];
+            if (Val[it] > 0 && (!vis[v]))
+            {
+
+                Q.push(v);
+                vis[v] = true;
+                ans1++;
+            }
+        }
+    }
+}
+
 int main()
 {
     tot = 1;
-    scanf("%d%d", &n, &m);
+    scanf("%lld%lld", &n, &m);
     S = n + 1;
     T = n + 2;
-    for (int i = 1; i <= m; i++)
-        addedge(S, i, 1);
-    for (int i = m + 1; i <= n; i++)
-        addedge(i, T, 1);
-    while (~scanf("%d%d", &u, &v))
-        addedge(u, v, 1);
-    printf("%lld", dinic());
-    system("pause");
+    ll sum = 0;
+    ll cost;
+    for (ll i = 1; i <= n; i++)
+    {
+        scanf("%lld", &cost);
+        if (cost >= 0)
+        {
+            sum += cost;
+            addedge(S, i, cost);
+        }
+        else
+        {
+            addedge(i, T, -cost);
+        }
+    }
+    for (ll i = 1; i <= m; i++)
+    {
+        scanf("%lld%lld", &u, &v);
+        addedge(u, v, 0x3f3f3f3f3f3f3f3f);
+    }
+
+    ll tmp = dinic();
+    ana();
+    printf("%lld %lld", ans1, sum - tmp);
+
     return 0;
 }

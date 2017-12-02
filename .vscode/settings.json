@@ -59,7 +59,10 @@
         "hash_map": "cpp",
         "random": "cpp",
         "rope": "cpp",
-        "numeric": "cpp"
+        "numeric": "cpp",
+        "codecvt": "cpp",
+        "cuchar": "cpp",
+        "shared_mutex": "cpp"
     },
     "python.linting.pylintEnabled": false,
     "python.formatting.provider": "yapf"
