@@ -2,14 +2,15 @@
 #include <cstring>
 #include <cstdlib>
 #include <algorithm>
-
+#include <vector>
+#include <iostream>
 using namespace std;
 typedef long long ll;
 
 int Q[110], dep[110];
 
 int tot, Head[110], cur[110], Next[21000];
-ll Val[21000], To[21000];
+ll Val[21000], To[21000], Trueflow[21000];
 int n, m, S, T, u, v;
 
 bool bfs()
@@ -75,34 +76,64 @@ ll dinic()
     return ans;
 }
 
-void addedge(int u, int v, ll flow)
+void addedge(int u, int v, ll flow, ll t_flow)
 {
-    //printf("%d->%d\n", u, v);
+    //printf("%d->%d %lld\n", u, v, flow);
     tot++;
     Next[tot] = Head[u];
     Head[u] = tot;
     Val[tot] = flow;
     To[tot] = v;
+    Trueflow[tot] = t_flow;
     tot++;
     Next[tot] = Head[v];
     Head[v] = tot;
     Val[tot] = 0;
     To[tot] = u;
+    Trueflow[tot] = t_flow;
 }
 
+ll sum;
+char data[500];
 int main()
 {
     tot = 1;
-    scanf("%d%d", &n, &m);
-    S = n + 1;
-    T = n + 2;
+    cin.getline(data, 300);
+
+    char *tokenPtr = strtok(data, " ");
+
+    m = atoi(tokenPtr);
+    tokenPtr = strtok(NULL, " ");
+    n = atoi(tokenPtr);
+    S = m + n + 1;
+    T = m + n + 2;
     for (int i = 1; i <= m; i++)
-        addedge(S, i, 1);
-    for (int i = m + 1; i <= n; i++)
-        addedge(i, T, 1);
-    while (~scanf("%d%d", &u, &v))
-        addedge(u, v, 1);
-    printf("%lld", dinic());
+    {
+        cin.getline(data, 300);
+
+        char *tokenPtr = strtok(data, " ");
+        int cost = atoi(tokenPtr);
+        sum += cost;
+        addedge(S, i, cost, cost);
+        tokenPtr = strtok(NULL, " ");
+        while (tokenPtr != NULL)
+        {
+            int v = atoi(tokenPtr);
+            addedge(i, m + v, 0x3f3f3f3f, 0x3f3f3f3f);
+            tokenPtr = strtok(NULL, " ");
+        }
+    }
+    for (int i = 1; i <= n; i++)
+    {
+        int cost;
+        cin >> cost;
+        //printf("%d\n", cost);
+        addedge(m + i, T, cost, cost);
+    }
+    ll tmp = dinic();
+
+    printf("%lld\n", sum - tmp);
+
     system("pause");
     return 0;
 }
