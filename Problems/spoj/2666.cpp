@@ -9,7 +9,11 @@ using namespace std;
 typedef long long ll;
 #define G greater<int>
 int n, k, u, v, w;
-vector<int> vec[100010];
+struct PATH
+{
+    int v, w;
+};
+vector<PATH> vec[100010];
 int size[100010], f[100010], root, ans, father[100010], deep[100010];
 bool vis[100010];
 
@@ -50,19 +54,19 @@ struct DELETE_HEAP
     }
 } heap1[100010], heap2[100010], global_heap;
 
-int st[100010][20], lighton[100010];
+int st[100010][20], lighton[100010], Dis[200010][20];
 
-void addedge(int u, int v)
+void addedge(int u, int v, int w)
 {
-    vec[u].push_back(v);
+    vec[u].push_back((PATH){v, w});
 }
 
 void getroot(int treesize, int x, int fa)
 {
     size[x] = 1, f[x] = 0;
-    for (int i = 0; i < vec[x].size(); i++)
+    for (auto Path : vec[x])
     {
-        int P = vec[x][i];
+        int P = Path.v;
         if ((P != fa) && (!vis[P]))
         {
             getroot(treesize, P, x);
@@ -78,9 +82,9 @@ void getroot(int treesize, int x, int fa)
 int getsize(int x, int fa)
 {
     int res = 1;
-    for (int i = 0; i < vec[x].size(); i++)
+    for (auto Path : vec[x])
     {
-        int P = vec[x][i];
+        int P = Path.v;
         if ((P != fa) && (!vis[P]))
             res += getsize(P, x);
     }
@@ -92,9 +96,9 @@ void solve(int x, int fa)
     //printf("spilt:%d\n", x);
     father[x] = fa;
     vis[x] = true;
-    for (int i = 0; i < vec[x].size(); i++)
+    for (auto Path : vec[x])
     {
-        int P = vec[x][i];
+        int P = Path.v;
         if (!vis[P])
         {
             root = 0;
@@ -110,11 +114,14 @@ void lca_dfs(int x, int fa, int depth)
 {
     st[x][0] = fa;
     deep[x] = depth;
-    for (int i = 0; i < vec[x].size(); i++)
+    for (auto Path : vec[x])
     {
-        int P = vec[x][i];
+        int P = Path.v;
         if (P != fa)
+        {
             lca_dfs(P, x, depth + 1);
+            Dis[P][0] = Path.w;
+        }
     }
 }
 
@@ -124,27 +131,34 @@ void init_st()
     for (int j = 1; j <= deep; j++)
         for (int i = 1; i <= n; i++)
             if (st[i][j - 1] != -1)
+            {
                 st[i][j] = st[st[i][j - 1]][j - 1];
+                Dis[i][j] = Dis[i][j - 1] + Dis[st[i][j - 1]][j - 1];
+            }
 }
 
 int lca(int a, int b)
 {
-    int ua = a, ub = b;
     if (deep[a] < deep[b])
         swap(a, b);
+    int res = 0;
     int depth = floor(log(deep[a] - 1) / log(2));
     for (int i = depth; i >= 0; i--)
         if (deep[a] - (1 << i) >= deep[b])
+        {
+            res += Dis[a][i];
             a = st[a][i];
+        }
     if (a == b)
-        return deep[ua] + deep[ub] - 2 * deep[a];
+        return res;
     for (int i = depth; i >= 0; i--)
         if ((st[a][i] != -1) && (st[a][i] != st[b][i]))
         {
+            res += Dis[a][i] + Dis[b][i];
             a = st[a][i];
             b = st[b][i];
         }
-    return deep[ua] + deep[ub] - 2 * deep[st[b][0]];
+    return res + Dis[a][0] + Dis[b][0];
 }
 
 //*************************
@@ -227,9 +241,9 @@ int main()
     ans = 0;
     for (int i = 1; i <= n - 1; i++)
     {
-        scanf("%d%d", &u, &v);
-        addedge(u, v);
-        addedge(v, u);
+        scanf("%d%d%d", &u, &v, &w);
+        addedge(u, v, w);
+        addedge(v, u, w);
     }
 
     lca_dfs(1, 0, 1);
@@ -260,10 +274,10 @@ int main()
     for (int i = 1; i <= Q; i++)
     {
         scanf("%s", CASE);
-        if (CASE[0] == 'G')
+        if (CASE[0] == 'A')
         {
             if (light == 0)
-                printf("-1\n");
+                printf("They have disappeared.\n");
             else if (light == 1)
                 printf("0\n");
             else
