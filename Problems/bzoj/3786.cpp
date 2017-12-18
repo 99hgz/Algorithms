@@ -238,9 +238,26 @@ void debug(int rt)
     debug(Tree[rt].ch[1]);
 }
 
+void builddfsid(int rt)
+{
+    in[rt] = ++timestamp;
+    data[timestamp] = val[rt];
+    for (int i = 0; i < vec[rt].size(); i++)
+        builddfsid(vec[rt][i]);
+    out[rt] = ++timestamp;
+    data[timestamp] = -val[rt];
+    linki2o[in[rt]] = out[rt];
+}
+
 int main()
 {
-    scanf("%d%d", &n, &m);
+    scanf("%d", &n);
+    for (int i = 2; i <= n; i++)
+    {
+        scanf("%d", &fa[i]);
+        vec[fa[i]].push_back(i);
+    }
+    builddfsid(1);
     insertxl(0, n);
     PUSHDOWNLAZY(Root);
     char CASES[10];
@@ -280,11 +297,6 @@ int main()
             else
                 printf("%d\n", Tree[Root].rmax);
         }
-        /*PUSHDOWNLAZY(Root);
-        printf("-----debug----\n");
-        debug(Root);
-        printf("\n");
-        printf("-----debug end-----\n");*/
     }
     //system("pause");
     return 0;
