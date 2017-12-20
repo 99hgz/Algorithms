@@ -7,22 +7,32 @@
 #include <set>
 using namespace std;
 typedef long long ll;
-typedef pair<int, int> pr;
-int n, k, u, v, w, tn, L, R, Hash[100010], A;
+typedef pair<ll, ll> pr;
+int n, k, u, v, w, tn, Hash[150010];
+ll A, L, R, ans;
 struct Node
 {
     int v, w;
 };
-vector<Node> vec[100010];
-int size[100010], f[100010], root, ans, father[100010], deep[100010];
-bool vis[100010];
+vector<Node> vec[150010];
+int size[150010], f[150010], root, father[150010], deep[150010];
+bool vis[150010];
 
-int st[100010][20], dis[100010][20];
-struct TREE
+int st[150010][20];
+ll dis[150010][20];
+struct Node2
 {
-    int sum, lson, rson, num;
-} Tree[2000000];
-int tot, Root, val[100010], Troot[100010][2], cases;
+    int pos, num;
+    ll val;
+};
+
+bool cmp(const Node2 &a, const Node2 &b)
+{
+    return a.pos < b.pos;
+}
+
+vector<Node2> Troot[150010][2];
+int tot, Root, val[150010], cases;
 void addedge(int u, int v, int w)
 {
     vec[u].push_back((Node){v, w});
@@ -103,9 +113,10 @@ void init_st()
             }
 }
 
-int _lca(int a, int b)
+ll _lca(int a, int b)
 {
-    int ua = a, ub = b, res = 0;
+    int ua = a, ub = b;
+    ll res = 0;
     if (deep[a] < deep[b])
         swap(a, b);
     int depth = floor(log(deep[a] - 1) / log(2));
@@ -127,73 +138,81 @@ int _lca(int a, int b)
     return res + dis[a][0] + dis[b][0];
 }
 
-int lca(int a, int b)
+ll lca(int a, int b)
 {
-    int tmp = _lca(a, b);
-    printf("lca %d %d=%d\n", a, b, tmp);
+    ll tmp = _lca(a, b);
+    //printf("lca %d %d=%lld\n", a, b, tmp);
     return tmp;
 }
 
-void Tmodify(int &rt, int l, int r, int pos, int v)
+void Tmodify(int x, int id, int pos, ll val)
 {
-    //printf("%d %d %d %d %d\n", rt, l, r, pos, v);
-    if (v < 0)
+    if (Troot[x][id].size() == 0)
+    {
+        Troot[x][id].push_back((Node2){pos, 1, val});
         return;
-    if (!rt)
-        rt = ++tot;
-    int mid = (l + r) >> 1;
-    Tree[rt].sum += v;
-    Tree[rt].num++;
-    if (l == r)
-        return;
-    if (pos <= mid)
-        Tmodify(Tree[rt].lson, l, mid, pos, v);
+    }
+    if ((*(Troot[x][id].end() - 1)).pos == pos)
+        ((*(Troot[x][id].end() - 1)).val) += val,
+            ((*(Troot[x][id].end() - 1)).num)++;
     else
-        Tmodify(Tree[rt].rson, mid + 1, r, pos, v);
+        Troot[x][id].push_back((Node2){pos, ((*(Troot[x][id].end() - 1)).num) + 1, val + ((*(Troot[x][id].end() - 1)).val)});
+    /*printf("----------\n");
+    for (auto it : Troot[x][id])
+        printf("%d %d %lld\n", it.pos, it.num, it.val);
+    printf("----------\n");*/
 }
 
-pr Tquery(int rt, int l, int r, int L, int R)
+pr Tquery(int x, int id, int L, int R)
 {
-    if (!rt)
+    vector<Node2>::iterator Lit = lower_bound(Troot[x][id].begin(), Troot[x][id].end(), (Node2){L, 0}, cmp);
+    vector<Node2>::iterator Rit = lower_bound(Troot[x][id].begin(), Troot[x][id].end(), (Node2){R, 0}, cmp);
+    if (Lit == Troot[x][id].end())
         return make_pair(0, 0);
-    int mid = (l + r) >> 1;
-    if (L <= l && r <= R)
-        return make_pair(Tree[rt].sum, Tree[rt].num);
-    if (r < L || l > R)
+    if ((*Troot[x][id].begin()).pos > R)
         return make_pair(0, 0);
-    pr res = Tquery(Tree[rt].lson, l, mid, L, R);
-    pr res2 = Tquery(Tree[rt].rson, mid + 1, r, L, R);
-    return make_pair(res.first + res2.first, res.second + res2.second);
+    if ((Rit == Troot[x][id].end()) || (((*Rit).pos) > R))
+        Rit--;
+    /*printf("Tquery %d %d %d %d ----------\n", x, id, L, R);
+    for (auto it : Troot[x][id])
+        printf("%d %d %lld\n", it.pos, it.num, it.val);*/
+
+    ll LL = (Lit == (Troot[x][id].begin())) ? 0 : ((*(Lit - 1)).val);
+    ll Lnum = (Lit == (Troot[x][id].begin())) ? 0 : ((*(Lit - 1)).num);
+    //printf("return %lld %lld----------\n", ((*Rit).val) - LL, (ll)((*Rit).num) - Lnum);
+    return make_pair(((*Rit).val) - LL, (ll)((*Rit).num) - Lnum);
 }
 
 void modify(int source, int x, int val)
 {
-    Tmodify(Troot[x][0], 1, tn, val, lca(source, x));
+    Tmodify(x, 0, val, lca(source, x));
     if (father[x])
-        Tmodify(Troot[x][1], 1, tn, val, lca(source, father[x]));
+        Tmodify(x, 1, val, lca(source, father[x]));
     if (x != Root)
         modify(source, father[x], val);
 }
 
 void getans(int source, int x, int L, int R)
 {
-    printf("getans:source=%d x=%d L=%d R=%d\n", source, x, L, R);
+    //printf("getans:source=%d x=%d L=%d R=%d\n", source, x, L, R);
     int tmp = lca(x, source);
-    pr res = Tquery(Troot[x][0], 1, tn, L, R);
+    pr res = Tquery(x, 0, L, R);
     ans += res.first + res.second * tmp;
     if (father[x])
     {
-        res = Tquery(Troot[x][1], 1, tn, L, R);
+        res = Tquery(x, 1, L, R);
         ans -= res.first + res.second * lca(source, father[x]);
     }
     if (x != Root)
         getans(source, father[x], L, R);
 }
 
+vector<int> order[150010];
+
 int main()
 {
     int m;
-    scanf("%d%d%d", &n, &m, &A);
+    scanf("%d%d%lld", &n, &m, &A);
     for (int i = 1; i <= n; i++)
     {
         scanf("%d", &val[i]);
@@ -203,7 +222,11 @@ int main()
     sort(Hash + 1, Hash + 1 + n);
     tn = unique(Hash + 1, Hash + 1 + n) - Hash - 1;
     for (int i = 1; i <= n; i++)
+    {
         val[i] = lower_bound(Hash + 1, Hash + 1 + tn, val[i]) - Hash;
+        order[val[i]].push_back(i);
+        //printf("trueval=%d\n", val[i]);
+    }
 
     for (int i = 1; i <= n - 1; i++)
     {
@@ -220,31 +243,34 @@ int main()
     Root = root;
     solve(root, 0);
 
-    for (int i = 1; i <= n; i++)
-        modify(i, i, val[i]);
+    for (int i = 1; i <= tn; i++)
+        for (int j = 0; j < order[i].size(); j++)
+            modify(order[i][j], order[i][j], i);
 
-    int lastans = 0;
+    ll lastans = 0;
     for (int i = 1; i <= m; i++)
     {
-        int u, a, b;
-        scanf("%d%d%d", &u, &a, &b);
+        int u;
+        ll a, b;
+        scanf("%d%lld%lld", &u, &a, &b);
         L = min((a + lastans) % A, (b + lastans) % A),
         R = max((a + lastans) % A, (b + lastans) % A);
         ans = 0;
         if (L > Hash[tn])
         {
             printf("0\n");
+            lastans = 0;
             continue;
         }
-        L = *lower_bound(Hash + 1, Hash + 1 + tn, L);
+        L = lower_bound(Hash + 1, Hash + 1 + tn, L) - Hash;
         int it = lower_bound(Hash + 1, Hash + 1 + tn, R) - Hash;
         if (Hash[it] == R)
-            R = Hash[it];
+            R = it;
         else
-            R = Hash[it - 1];
+            R = it - 1;
         getans(u, u, L, R);
         lastans = ans;
-        printf("%d\n", ans);
+        printf("%lld\n", ans);
     }
     system("pause");
 }

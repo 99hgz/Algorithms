@@ -2,118 +2,87 @@
 #include <cstring>
 #include <cstdlib>
 #include <algorithm>
-#include <cstring>
 using namespace std;
 typedef long long ll;
 
-int bh, n, tn, m, l, r, G;
-int root[100010];
-int a[100011], Hash[100011];
-struct NODe
+ll tot;
+struct TREE
 {
-    int lson, rson, v;
-} tree[2000010];
+    ll num, lson, rson;
+    ll sum;
+} Tree[2000010];
+ll n, m, s[100010], e[100010], p[100010];
+struct TIME
+{
+    ll t, base, id;
+} ttp[200010];
 
-int build(int l, int r)
+bool cmp(TIME a, TIME b)
 {
-    bh++;
-    //printf("build:%d %d %d\n", l, r, bh);
-    int tbh = bh;
+    return a.t < b.t;
+}
+ll k, x, a, b, c, head, Root[10000010];
+
+void modify(ll &rt, ll l, ll r, ll x, ll base)
+{
+    ll thisrt = ++tot;
+    Tree[thisrt] = Tree[rt];
+    rt = thisrt;
+    ll mid = (l + r) >> 1;
+    Tree[thisrt].num += base, Tree[thisrt].sum += x * base;
     if (l == r)
-    {
-        tree[bh].v = 0;
-        return bh;
-    }
-    tree[tbh].lson = build(l, (l + r) >> 1);
-    tree[tbh].rson = build(((l + r) >> 1) + 1, r);
-    return tbh;
+        return;
+    if (x <= mid)
+        modify(Tree[thisrt].lson, l, mid, x, base);
+    else
+        modify(Tree[thisrt].rson, mid + 1, r, x, base);
 }
 
-int update(int i, int l, int r, int old)
+ll query(ll rt, ll l, ll r, ll x, ll sum)
 {
-
     if (l == r)
-    {
-        bh++;
-        tree[bh].v = tree[old].v + 1;
-        return bh;
-    }
-    int tbh;
-    int mid = (l + r) >> 1;
-    if (i > mid)
-    {
-        bh++;
-        tbh = bh;
-        tree[bh].v = tree[old].v + 1;
-        tree[bh].lson = tree[old].lson;
-        tree[tbh].rson = update(i, mid + 1, r, tree[old].rson);
-    }
+        return sum + x * l;
+    ll mid = (l + r) >> 1;
+    if (Tree[Tree[rt].lson].num >= x)
+        return query(Tree[rt].lson, l, mid, x, sum);
     else
-    {
-        bh++;
-        tbh = bh;
-        tree[bh].v = tree[old].v + 1;
-        tree[bh].rson = tree[old].rson;
-        tree[tbh].lson = update(i, l, mid, tree[old].lson);
-    }
-    //printf("%d %d %d %d", i, l, r, old);
-    //printf(" change->%d\n", tbh);
-    //printf("lson=%d rson=%d\n", tree[tbh].lson, tree[tbh].rson);
-    return tbh;
-}
-
-int query(int G, int bh1, int bh2, int l, int r)
-{
-    //printf("%d %d %d %d %d\n", G, bh1, bh2, l, r);
-    if (l == r)
-    {
-        return l;
-    }
-    int mid = (l + r) >> 1;
-    int lsl = tree[tree[bh2].lson].v - tree[tree[bh1].lson].v;
-    if (G <= lsl)
-    {
-        return query(G, tree[bh1].lson, tree[bh2].lson, l, mid);
-    }
-    else
-    {
-        return query(G - lsl, tree[bh1].rson, tree[bh2].rson, mid + 1, r);
-    }
+        return query(Tree[rt].rson, mid + 1, r, x - Tree[Tree[rt].lson].num, sum + Tree[Tree[rt].lson].sum);
 }
 
 int main()
 {
-    int t;
-    scanf("%d", &t);
-    while (t--)
+    scanf("%lld%lld", &m, &n);
+    ll MAXP = 0, pos = 0;
+    for (ll i = 1; i <= m; i++)
     {
-        bh = 0;
-        scanf("%d%d", &n, &m);
-        a[0] = -1054;
-        memset(tree, 0, sizeof(tree));
-        for (int i = 1; i <= n; i++)
+        scanf("%lld%lld%lld", &s[i], &e[i], &p[i]);
+        MAXP = max(MAXP, p[i]);
+        ttp[++pos] = (TIME){s[i], 1, i};
+        ttp[++pos] = (TIME){e[i] + 1, -1, i};
+    }
+    sort(ttp + 1, ttp + 1 + pos, cmp);
+    ll head = 1;
+    for (ll i = 1; i <= 100010; i++)
+    {
+        Root[i] = Root[i - 1];
+        while (ttp[head].t == i)
         {
-            scanf("%d", &a[i]);
-            Hash[i] = a[i];
-        }
-        sort(Hash + 1, Hash + n + 1);
-        int tn = unique(Hash + 1, Hash + n + 1) - Hash - 1;
-        //int tn = n;
-        root[0] = build(1, tn);
-        for (int i = 1; i <= n; i++)
-        {
-            int x = lower_bound(Hash + 1, Hash + tn + 1, a[i]) - Hash;
-            root[i] = update(x, 1, tn, root[i - 1]);
-            //root[i] = update(a[i], 1, tn, root[i - 1]);
-        }
-        for (int i = 1; i <= m; i++)
-        {
-            scanf("%d%d%d", &l, &r, &G);
-            printf("%d\n", Hash[query(G, root[l - 1], root[r], 1, tn)]);
-            //printf("%d\n", query(G, root[l - 1], root[r], 1, tn));
+            modify(Root[i], 1, MAXP, p[ttp[head].id], ttp[head].base);
+            head++;
         }
     }
-    //system("pause");
-    //scanf("%d", &n);
+    ll pre = 1;
+    for (ll i = 1; i <= n; i++)
+    {
+        scanf("%lld%lld%lld%lld", &x, &a, &b, &c);
+        k = 1 + (a * pre + b) % c;
+        //printf("true:%d\n", k);
+        if (k >= Tree[Root[x]].num)
+            pre = Tree[Root[x]].sum;
+        else
+            pre = query(Root[x], 1, MAXP, k, 0);
+        printf("%lld\n", pre);
+    }
+    // system("pause");
     return 0;
 }

@@ -65,3 +65,4 @@ Problems/bzoj/2227.py
 .vscode/launch.json
 .vscode/tasks.json
 *.json
+data.out

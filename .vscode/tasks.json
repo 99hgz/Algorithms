@@ -11,7 +11,8 @@
                 "-g",
                 "${file}",
                 "-o",
-                "${file}.exe"
+                "${file}.exe",
+                "-O2"
             ],
             "showOutput": "always"
         },
