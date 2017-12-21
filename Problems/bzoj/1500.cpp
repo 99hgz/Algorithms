@@ -13,7 +13,7 @@ queue<int> Q;
 struct TREENODE
 {
     int val, fix, size, rev, makesame, sum, rmax, rsum, lsum, ch[2];
-} Tree[1500010];
+} Tree[1000010];
 
 void doreverse(int rt)
 {
@@ -241,7 +241,11 @@ void debug(int rt)
 int main()
 {
     scanf("%d%d", &n, &m);
-    insertxl(0, n);
+    for (int i = 1; i <= n; i++)
+    {
+        scanf("%d", &x);
+        insert(Root, i, x);
+    }
     PUSHDOWNLAZY(Root);
     char CASES[10];
     int x, y, d;
