@@ -7,7 +7,8 @@ typedef long long ll;
 
 typedef pair<int, int> Rootpair;
 #define mp make_pair
-int tot, opt, x, Root, n;
+int tot, opt, x, Root, n, pos[100010], m, id[100010], y;
+char cases[110];
 struct TREENODE
 {
     int val, fix, size, fa, ch[2];
@@ -78,13 +79,14 @@ Rootpair split(int rt, int kth)
 
 int getrank(int rt)
 {
-    int res = 0;
+    int res = 1 + Tree[Tree[rt].ch[0]].size;
     while (rt)
     {
-        res++;
         if (rt == Tree[Tree[rt].fa].ch[1])
-            res += Tree[Tree[Tree[rt].fa].ch[0]].size
+            res += Tree[Tree[Tree[rt].fa].ch[0]].size + 1;
+        rt = Tree[rt].fa;
     }
+    return res;
 }
 
 int findkth(int val)
@@ -104,18 +106,7 @@ int findkth(int val)
 void insert(int val)
 {
     int rt = newnode(val);
-    int Rank = getrank(val);
-    Rootpair tmp = split(Root, Rank);
-    merge(Root, tmp.first, rt);
-    merge(Root, Root, tmp.second);
-}
-
-void del(int val)
-{
-    int Rank = getrank(val);
-    Rootpair tmp1 = split(Root, Rank);
-    Rootpair tmp2 = split(tmp1.first, Rank - 1);
-    merge(Root, tmp2.first, tmp1.second);
+    merge(Root, Root, rt);
 }
 
 void debug(int rt)
@@ -123,12 +114,51 @@ void debug(int rt)
     if (rt == 0)
         return;
     debug(Tree[rt].ch[0]);
-    printf("%d\n", Tree[rt].val);
+    printf("%d ", Tree[rt].val);
     debug(Tree[rt].ch[1]);
 }
 
 void top(int x)
 {
+    int Rank = getrank(x);
+    Rootpair tmp1 = split(Root, Rank);
+    Rootpair tmp2 = split(tmp1.first, Rank - 1);
+    merge(Root, tmp2.second, tmp2.first);
+    merge(Root, Root, tmp1.second);
+}
+
+void bottom(int x)
+{
+    int Rank = getrank(x);
+    Rootpair tmp1 = split(Root, Rank);
+    Rootpair tmp2 = split(tmp1.first, Rank - 1);
+    merge(Root, tmp2.first, tmp1.second);
+    merge(Root, Root, tmp2.second);
+}
+
+void Insert(int x, int t)
+{
+    if (t == 0)
+        return;
+    int Rank = getrank(x);
+    if (t == 1)
+    {
+        Rootpair tmp1 = split(Root, Rank + 1);
+        Rootpair tmp2 = split(tmp1.first, Rank);
+        Rootpair tmp3 = split(tmp2.first, Rank - 1);
+        merge(Root, tmp3.first, tmp2.second);
+        merge(Root, Root, tmp3.second);
+        merge(Root, Root, tmp1.second);
+    }
+    else
+    {
+        Rootpair tmp1 = split(Root, Rank);
+        Rootpair tmp2 = split(tmp1.first, Rank - 1);
+        Rootpair tmp3 = split(tmp2.first, Rank - 2);
+        merge(Root, tmp3.first, tmp2.second);
+        merge(Root, Root, tmp3.second);
+        merge(Root, Root, tmp1.second);
+    }
 }
 
 int main()
@@ -144,10 +174,21 @@ int main()
     {
         scanf("%s%d", cases, &x);
         if (cases[0] == 'Q')
-            printf("%d\n", Tree[findkth()].val);
+            printf("%d\n", Tree[findkth(x)].val);
         else if (cases[0] == 'T')
-            top(x);
+            top(pos[x]);
+        else if (cases[0] == 'I')
+        {
+            scanf("%d", &y);
+            Insert(pos[x], y);
+        }
+        else if (cases[0] == 'A')
+            printf("%d\n", getrank(pos[x]) - 1);
+        else if (cases[0] == 'B')
+            bottom(pos[x]);
+        //debug(Root);
+        //printf("\n");
     }
-    system("pause");
+    //system("pause");
     return 0;
 }
