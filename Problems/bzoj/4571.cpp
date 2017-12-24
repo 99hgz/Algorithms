@@ -4,7 +4,12 @@
 #include <algorithm>
 using namespace std;
 typedef long long ll;
-
+struct TREE
+{
+    int lson, rson, num;
+} Tree[100010 * 17];
+int Root[200010], tot;
+int n, m, a[200010], b, x, l, r;
 void modify(int &rt, int l, int r, int x, int base)
 {
     int thisrt = ++tot;
@@ -37,12 +42,32 @@ int main()
     {
         scanf("%d", &a[i]);
         Root[i] = Root[i - 1];
-        insert(Root[i], 1, 100000, a[i], 1);
+        modify(Root[i], 1, 100000, a[i], 1);
     }
     for (int i = 1; i <= m; i++)
     {
         scanf("%d%d%d%d", &b, &x, &l, &r);
+        int pre = 0;
+        for (int j = 3; j >= 0; j--)
+        {
+            int base = 1 << j;
+            if (((b >> j) & 1) == 0)
+            {
+                int tmp = query(Root[l - 1], Root[r], 1, 100000, pre + base - x, pre + 2 * base - 1 - x);
+                //printf("1query:%d %d %d %d\n", j, tmp, pre + base - x, pre + 2 * base - 1 - x);
+                if (tmp)
+                    pre |= base;
+            }
+            else
+            {
+                int tmp = query(Root[l - 1], Root[r], 1, 100000, pre - x, pre + base - 1 - x);
+                //printf("0query:%d %d %d %d\n", j, tmp, pre - x, pre + base - 1 - x);
+                if (tmp == 0)
+                    pre |= base;
+            }
         }
+        printf("%d\n", b ^ pre);
+    }
     system("pause");
     return 0;
 }

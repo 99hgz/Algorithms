@@ -1,8 +1,13 @@
+<<<<<<< HEAD
 #include <stdio.h>
+=======
+#include <cstdio>
+>>>>>>> e53e6aad192c05db996fc16c40cb0968ea05a541
 #include <cstring>
 #include <cstdlib>
 #include <algorithm>
 using namespace std;
+<<<<<<< HEAD
 typedef unsigned int ll;
 
 struct TREE
