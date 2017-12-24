@@ -71,7 +71,7 @@ void access(int x)
 {
     int t = 0;
     while (x)
-        splay(x), ch[x][1] = t, t = x, x = fa[x];
+        splay(x), ch[x][1] = t, update(x), t = x, x = fa[x];
 }
 
 void rever(int x)
@@ -86,7 +86,7 @@ void link(int x, int y)
 
 void cut(int x, int y)
 {
-    rever(x), access(y), splay(y), ch[y][0] = fa[x] = 0;
+    rever(x), access(y), splay(y), ch[y][0] = fa[x] = 0, update(y);
 }
 
 int find(int x)

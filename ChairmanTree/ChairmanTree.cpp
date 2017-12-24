@@ -1,11 +1,11 @@
 
-void modify(ll &rt, ll l, ll r, ll x, ll base)
+void modify(int &rt, int l, int r, int x, int base)
 {
-    ll thisrt = ++tot;
+    int thisrt = ++tot;
     Tree[thisrt] = Tree[rt];
     rt = thisrt;
-    ll mid = (l + r) >> 1;
-    Tree[thisrt].num += base, Tree[thisrt].sum += x * base;
+    int mid = (l + r) >> 1;
+    Tree[thisrt].num += base;
     if (l == r)
         return;
     if (x <= mid)
@@ -14,13 +14,23 @@ void modify(ll &rt, ll l, ll r, ll x, ll base)
         modify(Tree[thisrt].rson, mid + 1, r, x, base);
 }
 
-ll query(ll rt, ll l, ll r, ll x, ll sum)
+int query(int rt, int l, int r, int x)
 {
     if (l == r)
-        return sum + x * l;
-    ll mid = (l + r) >> 1;
-    if (Tree[Tree[rt].lson].num >= x)
-        return query(Tree[rt].lson, l, mid, x, sum);
+        return Tree[rt].num;
+    int mid = (l + r) >> 1;
+    if (x <= mid)
+        return query(Tree[rt].lson, l, mid, x);
     else
-        return query(Tree[rt].rson, mid + 1, r, x - Tree[Tree[rt].lson].num, sum + Tree[Tree[rt].lson].sum);
+        return query(Tree[rt].rson, mid + 1, r, x);
+}
+
+int query(int rt, int l, int r, int L, int R)
+{
+    if (L <= l && r <= R)
+        return Tree[rt].num;
+    if (r < L || l > R)
+        return 0;
+    int mid = (l + r) >> 1;
+    return query(Tree[rt].lson, l, mid, L, R) + query(Tree[rt].rson, mid + 1, r, L, R);
 }

@@ -9,7 +9,7 @@ int tot, Root[20010 * 4], Hash[20010];
 struct TREE
 {
     int num, lson, rson;
-} Tree[20010 * 100];
+} Tree[200010 * 100];
 int n, val[20010], ans, tn, m, l, r;
 void insert_in(int &rt, int l, int r, int x, int base)
 {
@@ -27,6 +27,8 @@ void insert_in(int &rt, int l, int r, int x, int base)
 
 int query_in(int rt, int l, int r, int L, int R)
 {
+    if (L > R)
+        return 0;
     if (rt == 0)
         return 0;
     if (L <= l && r <= R)
@@ -51,6 +53,7 @@ void insert_out(int rt, int l, int r, int x, int val, int base)
 
 int query_out(int rt, int l, int r, int L, int R, int inl, int inr)
 {
+    //printf("query_out:%d %d %d %d %d %d %d\n", rt, l, r, L, R, inl, inr);
     if (L > R)
         return 0;
     if (L <= l && r <= R)
@@ -73,7 +76,8 @@ int main()
     tn = unique(Hash + 1, Hash + 1 + n) - Hash - 1;
     for (int i = 1; i <= n; i++)
     {
-        val[i] = lower_bound(Hash + 1, Hash + 1 + n, val[i]) - Hash;
+        val[i] = lower_bound(Hash + 1, Hash + 1 + tn, val[i]) - Hash;
+        //printf("true:%d\n", val[i]);
         insert_out(1, 1, n, i, val[i], 1);
         ans += query_out(1, 1, n, 1, i - 1, val[i] + 1, tn);
     }
@@ -85,7 +89,9 @@ int main()
         if (l > r)
             swap(l, r);
         ans -= query_out(1, 1, n, l + 1, r - 1, val[r] + 1, tn) + query_out(1, 1, n, l + 1, r - 1, 1, val[l] - 1);
+        //printf("step1:%d\n", ans);
         ans += query_out(1, 1, n, l + 1, r - 1, 1, val[r] - 1) + query_out(1, 1, n, l + 1, r - 1, val[l] + 1, tn);
+        //printf("step2:%d %d\n", query_out(1, 1, n, l + 1, r - 1, 1, val[r] - 1), query_out(1, 1, n, l + 1, r - 1, val[l] + 1, tn));
         insert_out(1, 1, n, l, val[l], -1);
         insert_out(1, 1, n, r, val[r], -1);
         if (val[l] < val[r])
@@ -97,6 +103,6 @@ int main()
         insert_out(1, 1, n, r, val[r], 1);
         printf("%d\n", ans);
     }
-    system("pause");
+    // system("pause");
     return 0;
 }
