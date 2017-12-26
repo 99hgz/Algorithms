@@ -3,18 +3,24 @@
 #include <cstdlib>
 #include <algorithm>
 #include <map>
+#include <vector>
 using namespace std;
 typedef long long ll;
-int opt, n, x, q;
-int ch[400010][2], st[400010], size[400010], fa[400010], key[400010], Root, sz, m, y, val1[400010], val2[400010], mx[400010], tot;
+int opt, n, x, q, T;
+int ch[400010][2], st[400010], size[400010], fa[400010], key[400010], Root, cnt, sz, m, y, val1[400010], val2[400010], mx[400010], tot, mark[400010];
 struct EDGE
 {
-    int u, v, t, l;
+    int u, v, t, start;
 } Edge[400010];
+
+bool cmp(EDGE a, EDGE b)
+{
+    return a.start < b.start;
+}
+
 int id, l, u, v, sum[400010];
 char cases[10];
 bool rev[400010], ontree[400010];
-
 inline bool isroot(int rt)
 {
     return ch[fa[rt]][0] != rt && ch[fa[rt]][1] != rt;
@@ -121,11 +127,18 @@ inline int query(int x, int y)
     return mx[y] - n;
 }
 
+int ufs_fa[1500010];
+
+int getfather(int x)
+{
+    return ufs_fa[x] == 0 ? x : ufs_fa[x] = getfather(ufs_fa[x]);
+}
+
 inline int query2(int x, int y)
 {
     if (x == y)
         return 0;
-    int ta = find(x), tb = find(y);
+    int ta = getfather(x), tb = getfather(y);
     if (ta != tb)
         return -1;
     rever(x), access(y), splay(y);
@@ -134,60 +147,74 @@ inline int query2(int x, int y)
 
 void modify(int x, int l)
 {
-    if (!ontree[x - n])
-        return;
     rever(x), val2[x] = l;
+}
+
+void step2(int id)
+{
+    int tmp = query2(Edge[id].u, Edge[id].v);
+    if (tmp % 2 == 0)
+        mark[id] = 1, cnt++;
 }
 
 void addedge(int id)
 {
+    if (Edge[id].u == Edge[id].v)
+    {
+        mark[id] = 1, cnt++;
+        return;
+    }
     val1[id + n] = Edge[id].t;
-    val2[id + n] = Edge[id].l;
-    sum[id + n] = Edge[id].l;
-    int ta = find(Edge[id].u), tb = find(Edge[id].v);
+    sum[id + n] = 1;
+    int ta = getfather(Edge[id].u), tb = getfather(Edge[id].v);
     if (ta != tb)
-        link(Edge[id].u, id + n), link(Edge[id].v, id + n), ontree[id] = true;
+        link(Edge[id].u, id + n), link(Edge[id].v, id + n), ufs_fa[ta] = tb, ontree[id] = true;
     else
     {
         int tid = query(Edge[id].u, Edge[id].v);
-        if (Edge[tid].t < Edge[id].t)
+        if (Edge[tid].t >= Edge[id].t)
+            step2(id);
+        else
         {
+            ontree[id] = true;
             cut(tid + n, Edge[tid].u), cut(tid + n, Edge[tid].v);
             link(Edge[id].u, id + n), link(id + n, Edge[id].v);
-            ontree[id] = true, ontree[tid] = false;
+            step2(tid);
+            ontree[tid] = false;
         }
     }
 }
-
+vector<int> vec[400010];
 int main()
 {
-    scanf("%d%d", &n, &m);
+    scanf("%d%d%d", &n, &m, &T);
     for (int i = 1; i <= n + m; i++)
         mx[i] = i;
-    memset(val1, 0x3f3f3f3f, sizeof val1);
+    for (int i = 1; i <= n; i++)
+        val1[i] = 0x3f3f3f3f;
     for (int i = 1; i <= m; i++)
+        val2[n + i] = 1;
+    for (int i = 1; i <= m; i++)
+        scanf("%d%d%d%d", &Edge[i].u, &Edge[i].v, &Edge[i].start, &Edge[i].t);
+    sort(Edge + 1, Edge + 1 + m, cmp);
+    for (int i = 1; i <= m; i++)
+        vec[Edge[i].t].push_back(i);
+    int head = 1;
+    for (int i = 0; i <= T; i++)
     {
-        scanf("%s", cases);
-        if (cases[0] == 'f')
+        while (head <= m && Edge[head].start == i)
         {
-            scanf("%d", &id);
-            id++;
-            scanf("%d%d%d%d", &Edge[id].u, &Edge[id].v, &Edge[id].t, &Edge[id].l);
-            Edge[id].u++, Edge[id].v++;
-            addedge(id);
+            addedge(head);
+            head++;
         }
-        else if (cases[0] == 'm')
-        {
-            scanf("%d%d", &u, &v);
-            u++, v++;
-            printf("%d\n", query2(u, v));
-        }
-        else
-        {
-            scanf("%d%d", &id, &l);
-            id++, modify(id + n, l);
-            Edge[id].l = l;
-        }
+        for (int it = 0; it < vec[i].size(); it++)
+            if (mark[vec[i][it]])
+                cnt--;
+            else if (ontree[vec[i][it]])
+                cut(vec[i][it] + n, Edge[vec[i][it]].u), cut(vec[i][it] + n, Edge[vec[i][it]].v);
+        //printf("cnt=%d\n", cnt);
+        i != T &&printf("%s\n", cnt ? "No" : "Yes");
     }
+    system("pause");
     return 0;
 }

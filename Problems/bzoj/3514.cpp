@@ -6,15 +6,14 @@
 using namespace std;
 typedef long long ll;
 int opt, n, x, q;
-int ch[400010][2], st[400010], size[400010], fa[400010], key[400010], Root, sz, m, y, val1[400010], val2[400010], mx[400010], tot;
+int ch[400010][2], st[400010], size[400010], fa[400010], key[400010], sz, m, y, val1[400010], mx[400010], tot;
 struct EDGE
 {
-    int u, v, t, l;
+    int u, v, t;
 } Edge[400010];
-int id, l, u, v, sum[400010];
+int id, l, u, v;
 char cases[10];
-bool rev[400010], ontree[400010];
-
+bool rev[400010];
 inline bool isroot(int rt)
 {
     return ch[fa[rt]][0] != rt && ch[fa[rt]][1] != rt;
@@ -42,11 +41,6 @@ inline void update(int x)
         mx[x] = mx[ch[x][0]];
     if (ch[x][1] && val1[mx[ch[x][1]]] < val1[mx[x]])
         mx[x] = mx[ch[x][1]];
-    sum[x] = val2[x];
-    if (ch[x][0])
-        sum[x] += sum[ch[x][0]];
-    if (ch[x][1])
-        sum[x] += sum[ch[x][1]];
 }
 
 void rotate(int x)
@@ -121,32 +115,21 @@ inline int query(int x, int y)
     return mx[y] - n;
 }
 
-inline int query2(int x, int y)
+int ufs_fa[1500010];
+
+int getfather(int x)
 {
-    if (x == y)
-        return 0;
-    int ta = find(x), tb = find(y);
-    if (ta != tb)
-        return -1;
-    rever(x), access(y), splay(y);
-    return sum[y];
+    return ufs_fa[x] == 0 ? x : ufs_fa[x] = getfather(ufs_fa[x]);
 }
 
-void modify(int x, int l)
-{
-    if (!ontree[x - n])
-        return;
-    rever(x), val2[x] = l;
-}
+int kick[200010], k, type;
 
 void addedge(int id)
 {
-    val1[id + n] = Edge[id].t;
-    val2[id + n] = Edge[id].l;
-    sum[id + n] = Edge[id].l;
-    int ta = find(Edge[id].u), tb = find(Edge[id].v);
+    val1[id + n] = id;
+    int ta = getfather(Edge[id].u), tb = getfather(Edge[id].v);
     if (ta != tb)
-        link(Edge[id].u, id + n), link(Edge[id].v, id + n), ontree[id] = true;
+        link(Edge[id].u, id + n), link(Edge[id].v, id + n), ufs_fa[ta] = tb, kick[id] = 0;
     else
     {
         int tid = query(Edge[id].u, Edge[id].v);
@@ -154,40 +137,72 @@ void addedge(int id)
         {
             cut(tid + n, Edge[tid].u), cut(tid + n, Edge[tid].v);
             link(Edge[id].u, id + n), link(id + n, Edge[id].v);
-            ontree[id] = true, ontree[tid] = false;
+            kick[id] = tid;
         }
     }
+}
+int Root[200010];
+struct TREE
+{
+    int lson, rson, num;
+} Tree[200010 * 20];
+int r;
+void modify(int &rt, int l, int r, int x, int base)
+{
+    int thisrt = ++tot;
+    Tree[thisrt] = Tree[rt];
+    rt = thisrt;
+    int mid = (l + r) >> 1;
+    Tree[thisrt].num += base;
+    if (l == r)
+        return;
+    if (x <= mid)
+        modify(Tree[thisrt].lson, l, mid, x, base);
+    else
+        modify(Tree[thisrt].rson, mid + 1, r, x, base);
+}
+
+int query(int rt1, int rt2, int l, int r, int L, int R)
+{
+    if (L <= l && r <= R)
+        return Tree[rt2].num - Tree[rt1].num;
+    if (r < L || l > R)
+        return 0;
+    int mid = (l + r) >> 1;
+    return query(Tree[rt1].lson, Tree[rt2].lson, l, mid, L, R) + query(Tree[rt1].rson, Tree[rt2].rson, mid + 1, r, L, R);
 }
 
 int main()
 {
-    scanf("%d%d", &n, &m);
+    scanf("%d%d%d%d", &n, &m, &k, &type);
     for (int i = 1; i <= n + m; i++)
         mx[i] = i;
-    memset(val1, 0x3f3f3f3f, sizeof val1);
+    for (int i = 1; i <= n; i++)
+        val1[i] = 0x3f3f3f3f;
     for (int i = 1; i <= m; i++)
     {
-        scanf("%s", cases);
-        if (cases[0] == 'f')
-        {
-            scanf("%d", &id);
-            id++;
-            scanf("%d%d%d%d", &Edge[id].u, &Edge[id].v, &Edge[id].t, &Edge[id].l);
-            Edge[id].u++, Edge[id].v++;
-            addedge(id);
-        }
-        else if (cases[0] == 'm')
-        {
-            scanf("%d%d", &u, &v);
-            u++, v++;
-            printf("%d\n", query2(u, v));
-        }
+        scanf("%d%d", &Edge[i].u, &Edge[i].v);
+        Edge[i].t = i;
+        if (Edge[i].u != Edge[i].v)
+            addedge(i);
         else
-        {
-            scanf("%d%d", &id, &l);
-            id++, modify(id + n, l);
-            Edge[id].l = l;
-        }
+            kick[i] = i;
     }
+    for (int i = 1; i <= m; i++)
+    {
+        Root[i] = Root[i - 1];
+        modify(Root[i], 0, m, kick[i], 1);
+        //printf("kick:%d\n", kick[i]);
+    }
+    int lastans = 0;
+    for (int i = 1; i <= k; i++)
+    {
+        scanf("%d%d", &l, &r);
+        if (type == 1)
+            l ^= lastans, r ^= lastans;
+        lastans = n - query(Root[l - 1], Root[r], 0, m, 0, l - 1);
+        printf("%d\n", lastans);
+    }
+    //system("pause");
     return 0;
 }

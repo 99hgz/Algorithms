@@ -34,3 +34,13 @@ int query(int rt, int l, int r, int L, int R)
     int mid = (l + r) >> 1;
     return query(Tree[rt].lson, l, mid, L, R) + query(Tree[rt].rson, mid + 1, r, L, R);
 }
+
+int query(int rt1, int rt2, int l, int r, int L, int R)
+{
+    if (L <= l && r <= R)
+        return Tree[rt2].num - Tree[rt1].num;
+    if (r < L || l > R)
+        return 0;
+    int mid = (l + r) >> 1;
+    return query(Tree[rt1].lson, Tree[rt2].lson, l, mid, L, R) + query(Tree[rt1].rson, Tree[rt2].rson, mid + 1, r, L, R);
+}
