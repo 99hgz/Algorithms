@@ -33,6 +33,31 @@ void getphi(int n)
     }
 }
 
+/*void euler(int n){
+    ist[0]=ist[1]=true;
+    mu[1]=phi[1]=1;
+    for(int i=2;i<=n;i++){
+        if (!ist[i]){
+            prime[++tot]=i;
+            mu[i]=-1;
+            phi[i]=i-1;
+        }
+        for(int j=1;j<=tot;j++){
+            int t=i*prime[j];
+            if (t>n) break;
+            ist[t]=true;
+            if (i%prime[j]==0){
+                phi[t]=phi[i]*prime[j];
+                mu[t]=0;
+                break;
+            }else{
+                mu[t]=-mu[i];
+                phi[t]=phi[i]*(prime[j]-1);
+            }
+        }
+    }
+}*/
+
 int main()
 {
     scanf("%d", &n);
