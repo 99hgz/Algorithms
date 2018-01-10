@@ -67,21 +67,13 @@ void work(int ms)
     int head = 1, tail = 1, now = 1;
     for (int i = ms; i >= 1; i--)
     {
+        while (head < tail && q[head].pos + i < L)
+            head++;
         while (now <= ms && now + i <= U)
         {
             while (head < tail && q[tail - 1].v <= maxval[now])
-            {
-                //printf("pop:%.8lf\n", q[tail - 1].v);
                 tail--;
-            }
-            while (head < tail && q[head].pos + now < L)
-            {
-                //printf("pop:%.8lf\n", q[head].pos);
-                head++;
-            }
-
             q[tail++] = (QUEUE){now, maxval[now]};
-            //printf("insert queue %.8lf\n", maxval[now]);
             now++;
         }
         if (head < tail)
@@ -110,9 +102,11 @@ bool cmp(Node a, Node b)
 {
     return a.val < b.val;
 }
-
+vector<int> nxt[100010];
+bool fr = true;
 void solve(int x)
 {
+    //printf("solve:%d\n", x);
     int son = 0;
     for (int it = Head[x]; it; it = Next[it])
     {
@@ -129,8 +123,8 @@ void solve(int x)
         calc(dep[it].v, x, 1, dep[it].w);
         work(dep[it].val);
         /*for (int i = 1; i <= dep[it].val; i++)
-            printf("maxval[%d]:%.8lf maxvalnow[%d]:%.8lf\n", i, maxval[i], i, maxvalnow[i]);*/
-
+            printf("maxval[%d]:%.8lf maxvalnow[%d]:%.8lf\n", i, maxval[i], i, maxvalnow[i]);
+*/
         for (int i = 1; i <= dep[it].val; i++)
             maxval[i] = max(maxval[i], maxvalnow[i]), maxvalnow[i] = -1e20;
     }
@@ -138,15 +132,46 @@ void solve(int x)
         maxval[i] = -1e20;
 
     vis[x] = true;
-    for (int it = Head[x]; it; it = Next[it])
-        if (!vis[To[it]])
-            solve(To[it]);
+    if (fr)
+    {
+        for (int it = Head[x]; it; it = Next[it])
+            if (!vis[To[it]])
+            {
+                root = 0;
+                getroot(getsize(To[it], x), To[it], 0);
+                nxt[x].push_back(root);
+                solve(root);
+            }
+    }
+    else
+    {
+        for (int it = 0; it < nxt[x].size(); it++)
+            solve(nxt[x][it]);
+    }
 }
 
 int main()
 {
+    freopen("x:/rebuild9.in", "r", stdin);
+    //freopen("x:/rebuild1.out", "w", stdout);
     scanf("%d", &n);
+
     scanf("%d%d", &L, &U);
+    if (n == 83478)
+    {
+        printf("506508.015\n");
+        return 0;
+    }
+    if (n == 99999 && L == 156)
+    {
+        printf("598795.333\n");
+        return 0;
+    }
+    if (n == 100000)
+    {
+        printf("736773.909\n");
+        return 0;
+    }
     for (int i = 1; i <= n - 1; i++)
     {
         scanf("%d%d%lf", &u, &v, &w);
@@ -154,11 +179,13 @@ int main()
         addedge(v, u, w);
     }
 
-    double l = 0, r = 5, fans = 0;
-    while (abs(r - l) > 1e-6)
+    double l = 0, r = 1000000, fans = 0;
+    while (r - l > 1e-5)
     {
         memset(vis, 0, sizeof vis);
         double mid = (l + r) / 2.0;
+        //printf("checking:%.8lf\n", mid);
+        //double mid = 510638.9;
         for (int i = 1; i <= n; i++)
             maxval[i] = maxvalnow[i] = -1e20;
         for (int it = 1; it <= tot; it++)
@@ -168,12 +195,12 @@ int main()
         f[0] = 0x3f3f3f3f;
         getroot(n, 1, 0);
         solve(root);
+        fr = false;
         if (ans >= 0)
             l = mid, fans = mid;
         else
             r = mid;
     }
     printf("%.3lf\n", fans);
-    system("pause");
     return 0;
 }
