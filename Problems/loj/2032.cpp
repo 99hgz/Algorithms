@@ -6,18 +6,18 @@
 using namespace std;
 typedef long long ll;
 
-ll fa[100010], size[100010], timestamp, maxsonid[100010], dep[100010], in[100010], top[100010], init[100010], val[100010], out[100010];
-ll toroot[100010], dfs2val[100010];
+ll fa[200010], size[200010], timestamp, maxsonid[200010], dep[200010], in[200010], top[200010], init[200010], val[200010], out[200010];
+ll toroot[200010], dfs2val[200010];
 struct Node
 {
     ll v, w;
 };
-vector<Node> vec[100010];
-ll k[100010], b[100010];
-ll tree[100010 * 4];
+vector<Node> vec[200010];
+ll k[200010], b[200010];
+ll tree[200010 * 4];
 ll n, m, u, v, cases, x, y, w;
 ll s, t, a, tot;
-ll mx[100010 * 4];
+ll mx[200010 * 4];
 void addedge(ll u, ll v, ll w)
 {
     vec[u].push_back((Node){v, w});
@@ -91,16 +91,16 @@ void insert(ll rt, ll l, ll r, ll L, ll R, ll id)
         if (k[id] > k[tree[rt]])
         {
             if (pd(id, tree[rt], mid))
-                insert(rt * 2, l, mid, L, R, tree[rt]), tree[rt] = id;
+                insert(rt * 2 + 1, mid + 1, r, L, R, tree[rt]), tree[rt] = id;
             else
-                insert(rt * 2 + 1, mid + 1, r, L, R, id);
+                insert(rt * 2, l, mid, L, R, id);
         }
         else
         {
             if (pd(id, tree[rt], mid))
-                insert(rt * 2 + 1, mid + 1, r, L, R, tree[rt]), tree[rt] = id;
+                insert(rt * 2, l, mid, L, R, tree[rt]), tree[rt] = id;
             else
-                insert(rt * 2, l, mid, L, R, id);
+                insert(rt * 2 + 1, mid + 1, r, L, R, id);
         }
         update(rt, l, r);
         return;
@@ -121,6 +121,18 @@ ll getans(ll rt, ll l, ll r, ll L, ll R)
         return (ll)123456789123456789;
     ll mid = (l + r) >> 1;
     return min(min(calc(tree[rt], max(l, L)), calc(tree[rt], min(r, R))), min(getans(rt * 2, l, mid, L, R), getans(rt * 2 + 1, mid + 1, r, L, R)));
+}
+
+ll query(ll rt, ll l, ll r, ll pos)
+{
+    if (l == r)
+        return calc(rt, pos);
+    ll res = calc(rt, pos);
+    ll mid = (l + r) >> 1;
+    if (pos <= mid)
+        return min(res, query(rt * 2, l, mid, pos));
+    else
+        return min(res, query(rt * 2 + 1, mid + 1, r, pos));
 }
 
 ll _lca(ll s, ll t)
@@ -170,7 +182,7 @@ void Modify(ll s, ll t, ll a, ll b1)
             b[tot] = -a * toroot[top[x]] + a * dis + b1;
         }
         //printf("line[%lld] k=%lld b=%lld\n", tot, k[tot], b[tot]);
-        insert(1, 1, n, in[top[x]], in[s], tot);
+        insert(1, 1, n, in[top[x]], in[x], tot);
         x = fa[top[x]];
     }
     if (dep[x] < dep[y])
@@ -237,6 +249,14 @@ int main()
             scanf("%lld%lld", &s, &t);
             printf("%lld\n", Query(s, t));
         }
+        /*if (i == 8)
+        {
+            printf("%lld\n", query(1, 1, n, in[7]));
+            printf("%lld\n", query(1, 1, n, in[4]));
+            printf("%lld\n", query(1, 1, n, in[2]));
+            printf("%lld\n", query(1, 1, n, in[5]));
+            printf("%lld\n", query(1, 1, n, in[10]));
+        }*/
     }
     system("pause");
     return 0;
