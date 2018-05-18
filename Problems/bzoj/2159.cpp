@@ -4,9 +4,9 @@
 #include <algorithm>
 using namespace std;
 typedef long long ll;
-
+ 
 int k,n;
-ll s[155][155],fac[155],c[50010][155],u[50010][155];
+int s[155][155],fac[155],c[50010][155],u[50010][155];
 int MOD=10007;
 int cnt,Head[50010],Next[100010],To[100010];
 void addedge(int u,int v){
@@ -20,7 +20,7 @@ void addedge(int u,int v){
     Head[u]=cnt;
     To[cnt]=v;
 }
-
+ 
 void dfs1(int x,int fa){
     c[x][0]=1;
     for(int i=Head[x];i;i=Next[i]){
@@ -33,7 +33,7 @@ void dfs1(int x,int fa){
         }
     }
 }
-
+ 
 void dfs2(int x,int fa){
     if(fa){
         u[x][0]=n-c[x][0];
@@ -46,7 +46,7 @@ void dfs2(int x,int fa){
             dfs2(v,x);
     }
 }
-
+ 
 int main() {
     int N, L, i, now, A, B, Q, tmp; 
     scanf("%d%d%d", &N, &k, &L); 
@@ -72,9 +72,9 @@ int main() {
         ll ans=0;
         for(int j=1;j<=k;j++)
             ans=(ans+s[k][j]*fac[j]%MOD*(u[i][j]+c[i][j])%MOD)%MOD;
-        printf("%lld\n", ans);
+        printf("%d\n", ans);
     }
-    
+     
     //system("pause");
     return 0;
 }
