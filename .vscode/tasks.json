@@ -11,7 +11,8 @@
                 "-g",
                 "${file}",
                 "-o",
-                "${file}.exe"
+                "${file}.exe",
+                "-std=c++11"
             ],
             "showOutput": "always"
         },
