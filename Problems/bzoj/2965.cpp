@@ -57,8 +57,11 @@ namespace G{
     void find_region(int u,int eid){
         if (vis[eid])return;
         region_tot++;
+        //printf("regionid=%d\n", region_tot);
         double area=0;
         while(!vis[eid]){
+            //printf("%d (%d,%d)->(%d,%d)\n", eid,p[line[eid].u].x,p[line[eid].u].y,p[line[eid].v].x,p[line[eid].v].y);
+            
             int v=line[eid].v;
             area+=cross(p[u],p[v]);
             vis[eid]=true;
@@ -70,6 +73,7 @@ namespace G{
         if (area<0) 
             inf_area=region_tot;
         S[region_tot]=area/2;
+        //printf("S=%.8lf\n", area);
     }
 
     void work(){
@@ -174,8 +178,7 @@ namespace scanning_line{
 
 namespace dinic{
     int S,T,Q[100010],dep[100010];
-    int tot,Head[100010],Next[100010],Val[100010],cur[100010]
-
+    int tot,Head[100010],Next[100010],Val[100010],cur[100010],To[100010];
 
     bool bfs()
     {
@@ -203,12 +206,14 @@ namespace dinic{
 
     int dfs(int x, int flow)
     {
+        //printf("%d %d\n", x,flow);
         if (x == T)
             return flow;
         int used = 0;
         for (int it = cur[x]; it; it = Next[it])
         {
             int v = To[it];
+            //printf("%d %d\n", x,v);
             if (dep[v] == dep[x] + 1)
             {
                 int tmp = dfs(v, min(Val[it], flow - used));
@@ -239,6 +244,7 @@ namespace dinic{
 
     void addedge(int u, int v, int flow)
     {
+        //printf("addedge:%d %d %d\n",u,v,flow );
         tot++;
         Next[tot] = Head[u];
         Head[u] = tot;
@@ -250,6 +256,43 @@ namespace dinic{
         Val[tot] = 0;
         To[tot] = u;
     }
+
+    void clear(){
+        memset(Head,0,sizeof Head);
+        T=G::region_tot+2;
+        S=G::region_tot+1;
+        tot=1;
+        for (int i = 2; i <= cnt; i+=2){
+            if (G::belong[i]==G::inf_area){
+                addedge(S,G::belong[i^1],line[i].len);
+                continue;
+            }
+            if(G::belong[i^1]==G::inf_area){
+                addedge(S,G::belong[i],line[i].len);
+                continue;
+            }
+            addedge(G::belong[i],G::belong[i^1],line[i].len);
+            addedge(G::belong[i^1],G::belong[i],line[i].len);
+        }
+    }
+}
+
+bool chosen[100010];
+int Ans[20];
+
+void dfs(int x,int chose){
+    if (x==q+1){
+        dinic::clear();
+        for (int i = 1; i <= q; i++)
+            if (chosen[i])
+                dinic::addedge(quepos[i],dinic::T,0x3f3f3f3f);
+        Ans[chose]=min(Ans[chose],dinic::dinic());
+        return;
+    }
+    chosen[x]=true;
+    dfs(x+1,chose+1);
+    chosen[x]=false;
+    dfs(x+1,chose);
 }
 
 int main() {
@@ -278,27 +321,10 @@ int main() {
     scanning_line::work();
     for (int i = 1; i <= q; i++)
         if (quepos[i]==G::inf_area) quepos[i]=-1;
-
-    dinic::S=G::region_tot+2;
-    dinic::tot=1;
-    for (int i = 2; i <= cnt; i+=2){
-        if (G::belong[i]==G::inf_area){
-            dinic::addedge(S,G::belong[i],line[i].len);
-            continue;
-        }
-        if(G::belong[i^1]==G::inf_area){
-            dinic::addedge(S,G::belong[i^1],line[i].len);
-            continue;
-        }
-        dinic::addedge(G::belong[i],G::belong[i^1],line[i].len);
-        dinic::addedge(G::belong[i^1],G::belong[i],line[i].len);
-    }
-
-    dinic::T=G::region_tot+1;
-    for (int i = 1; i <= g::region_tot; i++)
-        dinic::addedge(i,T,0x3f3f3f3f);
-    
-
-    //system("pause");
+    memset(Ans,0x3f3f3f3f,sizeof Ans);
+    dfs(1,0);
+    for (int i = 1; i <= q; i++)
+        printf("%d\n", Ans[i]);
+    system("pause");
     return 0;
 }

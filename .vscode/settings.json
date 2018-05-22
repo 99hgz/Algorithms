@@ -65,5 +65,6 @@
         "shared_mutex": "cpp"
     },
     "python.linting.pylintEnabled": false,
-    "python.formatting.provider": "yapf"
+    "python.formatting.provider": "yapf",
+    "C_Cpp.intelliSenseEngineFallback": "Enabled"
 }

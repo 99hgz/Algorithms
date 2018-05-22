@@ -43,7 +43,11 @@
             },
             "windows": {
                 "MIMode": "gdb",
+<<<<<<< HEAD
                 "miDebuggerPath": "D:\\MinGW\\bin\\gdb.exe",
+=======
+                "miDebuggerPath": "C:\\Program Files (x86)\\mingw-w64\\i686-7.2.0-posix-dwarf-rt_v5-rev1\\mingw32\\bin\\gdb.exe",
+>>>>>>> 206e9e036f873013bfdead77912a71ae6be7e717
                 "setupCommands": [
                     {
                         "description": "Enable pretty-printing for gdb",
