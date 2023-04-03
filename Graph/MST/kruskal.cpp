@@ -52,6 +52,30 @@ void unite(int x, int y)
             Rank[x]++;
     }
 }
+
+namespace MST{
+    int gf(int x){
+        return (fa[x]==x)?x:fa[x]=gf(fa[x]);
+    }
+    void addedge(int u,int v,int w){
+        edge[++cnt]=(Edge){u,v,w};
+    }
+    int mst(){
+        int res=0;
+        for(int i=1;i<=n+1;i++)
+            fa[i]=i;
+        sort(edge+1,edge+1+cnt,cmp);
+        for(int i=1;i<=cnt;i++){
+            int fu=gf(edge[i].u),fv=gf(edge[i].v);
+            if(fu!=fv){
+                res+=edge[i].w;
+                fa[fu]=fv;
+            }
+        }
+        return res;
+
+    }
+}
 //n为边的数量，m为村庄的数量
 int Kruskal(int n, int m)
 {

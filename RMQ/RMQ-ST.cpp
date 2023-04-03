@@ -16,26 +16,26 @@ const int MAX = 10010;
 #define min(a, b) a < b ? a : b
 #define CLR(arr, val) memset(arr, val, sizeof(arr))
 int n, m, low, high, a[MAX];
-class RMQ {
-public:
-  void rmq() {
-    int temp = (int)(log((double)n) / log(2.0));
-    for (int i = 0; i < n; i++)
-      DP[i][0] = a[i];
-    for (int j = 1; j <= temp; j++)
-      for (int i = 0; i < n; i++)
-        if (i + (1 << j) < n)
-          DP[i][j] = min(DP[i][j - 1], DP[i + (1 << (j - 1))][j - 1]);
-  }
-  int Minimum(int L, int H) {
-    int k = (int)(log((double)H - L + 1) / log(2.0));
-    return min(DP[L][k], DP[H - (1 << k) + 1][k]);
-  }
-  void Init() { CLR(DP, 0); }
 
-private:
-  int DP[MAX][20];
-};
+namespace RMQ{
+    int Log[100007], Max[100007][20];
+    inline void init(int *a, int n){
+        Log[0] = -1;
+        for (int i = 1; i <= n; ++i)
+            Log[i] = Log[i >> 1] + 1; //预处理Log数组
+        for (int i = 1; i <= n; ++i)
+            Max[i][0] = a[i]; //DP初始化
+        for (int j = 1; j <= Log[n]; ++j)
+            for (int i = 1; i + (1 << j) - 1 <= n; ++i)
+                Max[i][j] = max(Max[i][j - 1], Max[i + (1 << j - 1)][j - 1]); //DP转移倍增数组
+    }
+
+    inline int Query(int l, int r){
+        int k =  31 - __builtin_clz(r - l+1); //计算适合的区间长度
+        return max(Max[l][k], Max[r - (1 << k) + 1][k]);
+    }
+}
+
 int main() {
   RMQ R;
   R.Init();

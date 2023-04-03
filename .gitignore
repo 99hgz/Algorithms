@@ -15,7 +15,13 @@ $RECYCLE.BIN/
 *.msp
 *.exe
 *.o
-
+*.zip
+*.dll
+*.in
+*.out
+*.ans
+*.bat
+*.docx
 # Windows shortcuts
 .vscode
 *.lnk

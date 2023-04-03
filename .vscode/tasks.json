@@ -1,29 +1,35 @@
 {
     // See https://go.microsoft.com/fwlink/?LinkId=733558
     // for the documentation about the tasks.json format
-    "version": "0.1.0",
+    "version": "2.0.0",
     "tasks": [
         {
-            "taskName": "g++",
+            "label": "g++",
+            "type": "shell",
             "command": "g++",
-            "isShellCommand": true,
             "args": [
                 "-g",
                 "${file}",
                 "-o",
                 "${file}.exe",
-                "-O2"
+                "-std=c++11"
             ],
-            "showOutput": "always"
+            "problemMatcher": []
         },
         {
-            "taskName": "fpc",
+            "label": "fpc",
+            "type": "shell",
             "command": "fpc",
-            "isShellCommand": true,
             "args": [
                 "${relativeFile}"
             ],
-            "showOutput": "always"
+            "problemMatcher": []
+        },
+        {
+            "label": "Open Terminal",
+            "type": "shell",
+            "command": "osascript -e 'tell application \"Terminal\"\ndo script \"echo hello\"\nend tell'",
+            "problemMatcher": []
         }
     ]
 }

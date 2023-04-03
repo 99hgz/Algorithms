@@ -1,89 +1,53 @@
 #include <cstdio>
+#include <cstring>
 #include <cstdlib>
-#define MAXN 10000 + 10
+#include <algorithm>
 using namespace std;
+typedef long long ll;
 
-int par[MAXN], Rank[MAXN];
-typedef struct
-{
-    int a, b, price;
-} Node;
-Node a[MAXN];
-
-int cmp(const void *a, const void *b)
-{
-    return ((Node *)a)->price - ((Node *)b)->price;
+int n,m,u,v,w,cnt;
+struct Edge{
+    int u,v,w;
+}edge[2000100];
+int fa[1000010];
+bool cmp(Edge a,Edge b){
+    return a.w<b.w;
 }
-void Init(int n)
-{
-    for (int i = 0; i < n; i++)
-    {
-        Rank[i] = 0;
-        par[i] = i;
+namespace MST{
+    int gf(int x){
+        return (fa[x]==x)?x:fa[x]=gf(fa[x]);
     }
-}
-
-int find(int x)
-{
-    int root = x;
-    while (root != par[root])
-        root = par[root];
-    while (x != root)
-    {
-        int t = par[x];
-        par[x] = root;
-        x = t;
+    void addedge(int u,int v,int w){
+        edge[++cnt]=(Edge){u,v,w};
     }
-    return root;
-}
-
-void unite(int x, int y)
-{
-    x = find(x);
-    y = find(y);
-    if (Rank[x] < Rank[y])
-    {
-        par[x] = y;
-    }
-    else
-    {
-        par[y] = x;
-        if (Rank[x] == Rank[y])
-            Rank[x]++;
-    }
-}
-//n为边的数量，m为村庄的数量
-int Kruskal(int n, int m)
-{
-    int nEdge = 0, res = 0;
-    qsort(a, n, sizeof(a[0]), cmp);
-    for (int i = 0; i < n && nEdge != m - 1; i++)
-    {
-        if (find(a[i].a) != find(a[i].b))
-        {
-            unite(a[i].a, a[i].b);
-            res += a[i].price;
-            nEdge++;
+    int mst(){
+        int res=0;
+        for(int i=1;i<=n+1;i++)
+            fa[i]=i;
+        sort(edge+1,edge+1+cnt,cmp);
+        for(int i=1;i<=cnt;i++){
+            int fu=gf(edge[i].u),fv=gf(edge[i].v);
+            if(fu!=fv){
+                res+=edge[i].w;
+                fa[fu]=fv;
+            }
         }
+        return res;
+
     }
-    if (nEdge < m - 1)
-        res = -1;
-    return res;
 }
-int main()
-{
-    int n, m, ans, k;
-    scanf("%d %d %d", &m, &n, &k);
-    Init(m + 1);
-    for (int i = 0; i < n; i++)
-    {
-        scanf("%d%d%d", &a[i].a, &a[i].b, &a[i].price);
+
+int main() {
+    scanf("%d%d",&n,&m);
+    for(int i=1;i<=n;i++){
+        scanf("%d",&w);
+        MST::addedge(n+1,i,w);
     }
-    ans = Kruskal(n, m - k + 1);
-    if (ans == -1)
-        printf("No Answer\n");
-    else
-        printf("%d\n", ans);
-    //system("pause");
+    for(int i=1;i<=m;i++){
+        scanf("%d%d%d",&u,&v,&w);
+        MST::addedge(u,v,w);
+    }
+    printf("%d\n", MST::mst());
+    system("pause");
     return 0;
 }

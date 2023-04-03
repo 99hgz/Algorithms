@@ -1,6 +1,7 @@
 #include <cstdio>
 #include <algorithm>
 #include <cmath>
+
 using namespace std;
 double sqr(double x) { return x * x; }
 double a[1010][1010], b[1010], ans[1010];
