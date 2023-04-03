@@ -5,7 +5,7 @@
 using namespace std;
 typedef long long ll;
 
-int tot, Head[5010], Next[100010], From[100010], To[100010], Cost[100010], Val[100010];
+int tot=1, Head[5010], Next[100010], From[100010], To[100010], Cost[100010], Val[100010];
 int FLOW, Q[50100], pre[5010], n, m, S, T, dis[5010];
 bool inq[5010];
 
@@ -92,7 +92,6 @@ int mcf()
 
 int main()
 {
-    tot = 1;
     scanf("%d%d%d%d", &n, &m, &S, &T);
     for (int i = 1; i <= m; i++)
     {
